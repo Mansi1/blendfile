@@ -68,7 +68,7 @@
     "@vscode/test-electron": "3.1.0",
     "@vscode/vsce": "4.0.0",
     "defuss": "3.4.9",
-    "defuss-shadcn": "0.9.9",
+    "defuss-shadcn": "0.9.10",
     "defuss-ssg": "0.7.5",
     "defuss-vite": "1.2.1",
     "marked": "18.1.1",

@@ -75,7 +75,7 @@ build: ## build the library into dist/ (ESM, CJS, type declarations)
 # website/components can import the library as ../../src/index.ts in dev and build alike.
 website-assets: vscode-package ## copy defuss-shadcn bundles, sample .blend files, the extension .vsix and its preview styles into website/assets
 	@mkdir -p website/assets/vendor website/assets/samples
-	cp node_modules/defuss-shadcn/dist/components/core.min.css node_modules/defuss-shadcn/dist/components/all.min.css node_modules/defuss-shadcn/dist/components/all.min.js node_modules/defuss-shadcn/dist/theme/tangerine.css website/assets/vendor/
+	cp node_modules/defuss-shadcn/dist/components/core.min.css node_modules/defuss-shadcn/dist/components/all.min.css node_modules/defuss-shadcn/dist/components/all.min.js node_modules/defuss-shadcn/dist/theme/tangerine.css node_modules/defuss-shadcn/dist/components/mermaid/mermaid.min.css node_modules/defuss-shadcn/dist/components/mermaid/mermaid.min.js website/assets/vendor/
 	@mkdir -p website/assets/samples/textures
 	cp input/v43.blend input/scene_v52.blend input/texture_v43.blend website/assets/samples/
 	cp input/textures/texture_base.png input/textures/texture_normal.exr website/assets/samples/textures/

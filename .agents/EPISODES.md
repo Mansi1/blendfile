@@ -24,3 +24,7 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-19T22:54:29Z s=989b2bbf FINDING vscode-extension/media/preview.css:3 learn=none: A visual regression; no pixel assertion covers border colors.
 2026-10-19T22:54:29Z s=989b2bbf FINDING website/components/inspector.tsx:loadChosenFiles learn=test: The chosen-files e2e test selects two different .blend files in a row.
 2026-10-19T22:54:29Z s=989b2bbf FINDING e2e/website.spec.ts:openInspector learn=test: The helper is used by every inspector test.
+2026-10-19T22:57:22Z s=989b2bbf DONE fp=069ae444c013 cov=95.1% paths=skills-lock.json
+2026-10-19T23:36:38Z s=989b2bbf DONE fp=5b0759a31855 cov=95.1% paths=Makefile,bun.lock,package.json,skills-lock.json(+1)
+2026-10-19T23:36:38Z s=989b2bbf FINDING website/lib/layout.tsx:Layout, Makefile:website-assets learn=test: The existing Mermaid e2e test fails whenever the diagram bundle is missing.
+2026-10-19T23:36:47Z s=989b2bbf DONE fp=fd3cc41bf7f6 cov=95.1% paths=Makefile,bun.lock,package.json,skills-lock.json(+2)

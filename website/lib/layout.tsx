@@ -37,6 +37,8 @@ const currentAttribute = (route: string, currentRoute: string) => (route === cur
 
 export default function Layout({ title, description, currentRoute, children }: LayoutProps) {
   const specPages = listSpecPages();
+  // Since defuss-shadcn 0.9.10 Mermaid ships outside all.*; only the spec pages have diagrams.
+  const hasDiagrams = currentRoute.startsWith("/spec/");
   return (
     <html lang="en">
       <head>
@@ -49,6 +51,7 @@ export default function Layout({ title, description, currentRoute, children }: L
         <link rel="stylesheet" href="/assets/vendor/tangerine.css" />
         <link rel="stylesheet" href="/assets/vendor/all.min.css" />
         <link rel="icon" type="image/svg+xml" href="/assets/icon.svg" />
+        {hasDiagrams && <link rel="stylesheet" href="/assets/vendor/mermaid.min.css" />}
         <link rel="stylesheet" href="/assets/site.css" />
       </head>
       <body>
@@ -92,6 +95,7 @@ export default function Layout({ title, description, currentRoute, children }: L
           <main id="content">{children}</main>
         </div>
         <script type="module" src="/assets/vendor/all.min.js"></script>
+        {hasDiagrams && <script type="module" src="/assets/vendor/mermaid.min.js"></script>}
       </body>
     </html>
   );
