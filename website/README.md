@@ -15,3 +15,5 @@ Static documentation site for `blendfile`, built with defuss-ssg, defuss JSX and
 | `bun run preview` | build, then serve |
 
 The scripts change to the repository root before running defuss-ssg; `ARCH.md` explains why.
+
+Every push to `main` publishes the site to GitHub Pages at https://mansi1.github.io/blendfile/ (`.github/workflows/pages.yml`). To build for a sub-path yourself, set `SITE_BASE`, for example `SITE_BASE=/blendfile/ make website`.

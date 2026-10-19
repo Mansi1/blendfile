@@ -10,9 +10,10 @@ import {
   parseBlendFile,
 } from "../../src/index.ts";
 
+// VERIFIED: relative to the inspector page at the site root, so they also resolve when the site is served under a sub-path.
 const SAMPLES = [
-  { label: "Blender 5.2 sample (zstd)", url: "/assets/samples/v52_zstd.blend", fileName: "v52_zstd.blend" },
-  { label: "Blender 4.3 sample", url: "/assets/samples/v43.blend", fileName: "v43.blend" },
+  { label: "Blender 5.2 sample (zstd)", url: "assets/samples/v52_zstd.blend", fileName: "v52_zstd.blend" },
+  { label: "Blender 4.3 sample", url: "assets/samples/v43.blend", fileName: "v43.blend" },
 ];
 
 interface InspectorState {

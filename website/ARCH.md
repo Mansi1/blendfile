@@ -33,6 +33,8 @@ flowchart LR
 
 `make website` builds into `website/dist/`. `make start` serves it on port 4173 (`defuss-ssg serve`), `make dev` runs the dev server on port 3000. `make e2e` runs Playwright over every built page.
 
+`.github/workflows/pages.yml` builds the site on every push to `main` and deploys it to GitHub Pages. Project pages are served under `/blendfile/`, while the pages use root-absolute URLs. The `site-base` plugin in `config.ts` therefore prefixes `href`, `src`, the defuss-ssg hydration attributes and the hydration scripts' runtime import with `SITE_BASE`. The workflow sets it from `actions/configure-pages`. The inspector's sample URLs are relative instead, because only the root-level inspector page uses them. VERIFIED: a build with `SITE_BASE=/blendfile/`, served under `/blendfile/`, loaded every page and the inspector sample in Chromium with no failed requests.
+
 Mermaid diagrams load Mermaid 12.0.0 from jsDelivr at view time; this is the defuss-shadcn Mermaid component's default.
 
 ## Security and privacy

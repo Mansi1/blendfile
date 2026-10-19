@@ -13,3 +13,7 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-19T22:16:52Z s=989b2bbf FINDING e2e/consumer.ts:fixtures loop learn=none: Fixtures are defined by having truth JSON; test/fixtures.test.ts still covers each tracked fixture's truth.
 2026-10-19T22:16:52Z s=989b2bbf FINDING Makefile:vscode-package learn=none: vsce itself refuses to package without a repository field now that the flag is gone.
 2026-10-19T22:16:52Z s=989b2bbf FINDING website/pages/usage.mdx:48,75,95 learn=verifier: vae prose T04 flags any future Markdown site-root link.
+2026-10-19T22:24:51Z s=989b2bbf FAIL env.example
+2026-10-19T22:27:52Z s=989b2bbf DONE fp=0e7970dc8f39 cov=95.1% paths=.github/workflows/pages.yml,website/ARCH.md,website/README.md,website/components/inspector.tsx(+1)
+2026-10-19T22:27:52Z s=989b2bbf FINDING website/config.ts:basePlugin learn=none: Not mechanically checked in CI: the e2e suite serves the site at the root; a regression would show as broken pages only on GitHub Pages.
+2026-10-19T22:29:24Z s=989b2bbf DONE fp=4c0d165ebb52 cov=95.1% paths=.github/workflows/pages.yml,website/ARCH.md,website/README.md,website/components/inspector.tsx(+1)
