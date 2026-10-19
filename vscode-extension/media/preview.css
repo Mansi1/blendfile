@@ -1,5 +1,7 @@
-/* Preview styles. Colors come from the VS Code theme variables, so the preview follows light, dark and high-contrast themes. */
-:root {
+/* Preview styles. Colors come from the VS Code theme variables, so the preview follows light, dark and high-contrast themes.
+   The website mounts the preview in a shadow root (:host) and maps its theme onto the --vscode-* variables there. The
+   names below are derived on #preview-root, not on :host, because the site's own --border and --muted live on the host. */
+:root, #preview-root {
   --accent: var(--vscode-textLink-foreground, #e8590c);
   --border: var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
   --muted: var(--vscode-descriptionForeground, #888);
@@ -10,7 +12,8 @@
   --mono: var(--vscode-editor-font-family, ui-monospace, monospace);
 }
 
-body {
+body, :host {
+  display: block;
   margin: 0;
   padding: 0;
   background: var(--vscode-editor-background);
@@ -29,7 +32,7 @@ code, .value { font-family: var(--mono); font-size: 0.92em; }
 
 [hidden] { display: none !important; }
 
-.app { display: flex; flex-direction: column; height: 100vh; }
+.app { display: flex; flex-direction: column; height: var(--preview-height, 100vh); }
 .layout {
   flex: 1;
   min-height: 0;

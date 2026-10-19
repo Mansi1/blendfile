@@ -5,7 +5,7 @@ Static documentation site for `blendfile`, built with defuss-ssg, defuss JSX and
 - an overview of the format and the library
 - the specification, rendered from `../spec/*.md`
 - the library guide and API reference
-- an inspector that parses `.blend` files in the browser
+- an inspector that runs the VS Code extension's preview (3D view and struct browser) in the browser
 - a page for the VS Code extension, with its `.vsix` for download (`make website-assets` packs and copies it)
 
 | Command (from this folder) | Does |

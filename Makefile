@@ -73,10 +73,13 @@ build: ## build the library into dist/ (ESM, CJS, type declarations)
 
 # defuss-ssg copies the site into .ssg-temp/ next to the working directory; run from the repo root so
 # website/components can import the library as ../../src/index.ts in dev and build alike.
-website-assets: vscode-package ## copy defuss-shadcn bundles, sample .blend files and the extension .vsix into website/assets
+website-assets: vscode-package ## copy defuss-shadcn bundles, sample .blend files, the extension .vsix and its preview styles into website/assets
 	@mkdir -p website/assets/vendor website/assets/samples
 	cp node_modules/defuss-shadcn/dist/components/core.min.css node_modules/defuss-shadcn/dist/components/all.min.css node_modules/defuss-shadcn/dist/components/all.min.js node_modules/defuss-shadcn/dist/theme/tangerine.css website/assets/vendor/
-	cp input/v52_zstd.blend input/v43.blend website/assets/samples/
+	@mkdir -p website/assets/samples/textures
+	cp input/v43.blend input/scene_v52.blend input/texture_v43.blend website/assets/samples/
+	cp input/textures/texture_base.png input/textures/texture_normal.exr website/assets/samples/textures/
+	cp vscode-extension/media/preview.css website/assets/vendor/blend-preview.css
 	cp vscode-extension/blendfile-preview.vsix website/assets/
 
 website: website-assets ## build the static website into website/dist

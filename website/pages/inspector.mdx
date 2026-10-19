@@ -4,11 +4,11 @@ title: Inspector
 import Layout from "../lib/layout.tsx"
 import Inspector from "../components/inspector.tsx"
 
-<Layout title="Inspector" description="Open a .blend file in your browser and browse its header, blocks, datablocks and structs." currentRoute="/inspector.html">
+<Layout title="Inspector" description="Open a .blend file in your browser: a 3D view of the scene with materials and textures, and its header, blocks, datablocks and structs." currentRoute="/inspector.html">
 <div class="inspector-page">
 <article class="mk-docs-content" aria-labelledby="page-title">
 <h1 class="mk-docs-content-title" id="page-title">Inspector</h1>
-<p class="mk-docs-content-lead">Open a .blend file and see what is inside: the header, every block, the datablocks, and each struct member as the file's own SDNA describes it. The parsing runs in this page with the blendfile library; nothing is uploaded.</p>
+<p class="mk-docs-content-lead">Open a .blend file and see what is inside: a 3D view of the scene, the header, every block, the datablocks, and each struct member as the file's own SDNA describes it. This is the preview of the <a href="/vscode.html">VS Code extension</a>, running in this page with the blendfile library; nothing is uploaded.</p>
 </article>
 <Inspector />
 </div>

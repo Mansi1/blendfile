@@ -23,6 +23,12 @@ const collectPageErrors = (page: Page) => {
 
 const ROUTES = listHtmlRoutes(distDirectory);
 
+/** Opens the inspector page and waits for hydration: the preview's shadow root exists once the handlers are attached. */
+async function openInspector(page: Page) {
+  await page.goto("/inspector.html");
+  await page.waitForFunction(() => document.querySelector("#inspector-preview")?.shadowRoot);
+}
+
 test("the build contains the expected pages", () => {
   expect(ROUTES).toEqual(expect.arrayContaining(["/", "/usage.html", "/inspector.html", "/vscode.html", "/spec/", "/spec/05-sdna.html"]));
 });
@@ -79,33 +85,57 @@ test("theme toggle switches dark mode and remembers it", async ({ page }) => {
   expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(!wasDark);
 });
 
-test("inspector: sample file, datablock, pointer to mesh", async ({ page }) => {
+test("inspector: the extension's preview shows a sample scene, then a datablock and a pointer to its mesh", async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto("/inspector.html");
-  await page.getByRole("button", { name: "Blender 5.2 sample (zstd)" }).click();
-  const summary = page.locator("#inspector-summary");
-  await expect(summary).toContainText("LargeBHead8");
-  await expect(summary).toContainText("zstd");
-  await expect(summary).toContainText("5.2");
-  await expect(page.getByRole("img", { name: "File thumbnail" })).toBeVisible();
-  await page.getByRole("row", { name: /ProbeCube/ }).getByRole("button", { name: "Open" }).click();
-  await expect(page.locator("#inspector-struct .card-title")).toHaveText("Object");
-  await page.getByRole("button", { name: /→ Mesh "ProbeMesh"/ }).click();
-  await expect(page.locator("#inspector-struct .card-title")).toHaveText("Mesh");
-  await page.getByRole("link", { name: "ProbeCube" }).click();
-  await expect(page.locator("#inspector-struct .card-title")).toHaveText("Object");
+  await openInspector(page);
+  await page.getByRole("button", { name: "Blender 5.2 scene (zstd)" }).click();
+  await expect(page.locator("#inspector-status")).toContainText("Blender 5.2");
+  // The preview sits in a shadow root; Playwright locators reach into it.
+  const preview = page.locator("#inspector-preview");
+  await expect(preview.getByRole("heading", { name: "scene_v52.blend" })).toBeVisible();
+  await expect(preview.locator(".viewport-canvas")).toBeVisible();
+  await expect(preview.getByRole("button", { name: "Box", exact: true })).toBeVisible();
+  await preview.getByRole("tab", { name: "Inspector" }).click();
+  await expect(preview.locator(".facts")).toContainText("zstd");
+  await expect(preview.locator(".facts")).toContainText("LargeBHead8");
+  // Groups with more than 12 entries start collapsed; the filter opens the matching ones.
+  await preview.getByRole("searchbox", { name: "Filter datablocks" }).fill("Box");
+  await preview.getByRole("button", { name: "Box", exact: true }).click();
+  await expect(preview.locator("#struct-title")).toHaveText("Object");
+  await preview.getByRole("button", { name: /→ Mesh/ }).first().click();
+  await expect(preview.locator("#struct-title")).toHaveText("Mesh");
+  await preview.getByRole("navigation", { name: "Opened structs" }).getByRole("button", { name: "Box" }).click();
+  await expect(preview.locator("#struct-title")).toHaveText("Object");
   await page.screenshot({ path: join(screenshotDirectory, "inspector-loaded.png"), fullPage: true });
   expect(errors).toEqual([]);
 });
 
-test("inspector: chosen files, including a gzip file and a non-blend file", async ({ page }) => {
-  await page.goto("/inspector.html");
+test("inspector: the textured sample loads its image files and shows textures", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await openInspector(page);
+  await page.getByRole("button", { name: "Blender 4.3 textured plane" }).click();
+  const preview = page.locator("#inspector-preview");
+  await preview.getByRole("button", { name: "Material" }).click();
+  await expect(preview.locator("#viewer-textures")).toHaveText("Textures 3/3", { timeout: 20_000 });
+  expect(errors).toEqual([]);
+});
+
+test("inspector: chosen files, including a gzip file, a .blend with its images and a non-blend file", async ({ page }) => {
+  await openInspector(page);
+  const preview = page.locator("#inspector-preview");
   await page.locator("#inspector-file").setInputFiles(join(repositoryRoot, "input/v43_gzip.blend"));
-  await expect(page.locator("#inspector-summary")).toContainText("gzip");
-  await expect(page.locator("#inspector-summary")).toContainText("SmallBHead8");
+  await preview.getByRole("tab", { name: "Inspector" }).click();
+  await expect(preview.locator(".facts")).toContainText("gzip");
+  await expect(preview.locator(".facts")).toContainText("SmallBHead8");
+  // Image files chosen with the .blend file are found by name; the roughness image is packed in the file.
+  await page.locator("#inspector-file").setInputFiles(["input/texture_v43.blend", "input/textures/texture_base.png"].map((path) => join(repositoryRoot, path)));
+  await preview.getByRole("tab", { name: "3D View" }).click();
+  await preview.getByRole("button", { name: "Material" }).click();
+  await expect(preview.locator("#viewer-textures")).toContainText("Textures 2/3 · 1 missing: NormalImage", { timeout: 20_000 });
   // A .blend name passes the picker's accept filter, so the library itself rejects the content.
   await page.locator("#inspector-file").setInputFiles({ name: "notes.blend", mimeType: "application/octet-stream", buffer: Buffer.from("hello, not a blend file") });
-  await expect(page.locator("#inspector-error")).toContainText("NOT_BLEND");
+  await expect(preview.getByRole("alert")).toContainText("NOT_BLEND");
+  await expect(page.locator("#inspector-status")).toContainText("NOT_BLEND");
 });
 
 test("overview graphics: file anatomy, pointer hops from the fixture, byte share chart", async ({ page }) => {

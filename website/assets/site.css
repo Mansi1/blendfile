@@ -6,16 +6,40 @@ body { margin: 0; background: var(--background); color: var(--foreground); font-
   .site-shell { grid-template-columns: minmax(0, 1fr); }
   .site-shell > .mk-docs-navigation { position: static; max-height: none; }
 }
-.inspector-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1rem; }
-.inspector-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
-@media (min-width: 110rem) { .inspector-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); align-items: start; } }
 .screenshot { margin: 1.5rem 0; display: grid; gap: 0.5rem; }
 .screenshot img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
 .screenshot figcaption { color: var(--muted-foreground); font-size: 0.875rem; }
+.inspector-app { display: grid; gap: 1rem; min-width: 0; }
+.inspector-samples { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+/* The extension's preview reads VS Code theme variables; on the site they come from the site theme. */
+.blend-preview-host {
+  --preview-height: min(80vh, 52rem);
+  --vscode-editor-background: var(--background);
+  --vscode-foreground: var(--foreground);
+  --vscode-font-family: var(--font-sans);
+  --vscode-font-size: 0.875rem;
+  --vscode-editor-font-family: var(--font-mono);
+  --vscode-descriptionForeground: var(--muted-foreground);
+  --vscode-panel-border: var(--border);
+  --vscode-sideBar-background: var(--card);
+  --vscode-textLink-foreground: var(--primary);
+  --vscode-badge-background: var(--primary);
+  --vscode-badge-foreground: var(--primary-foreground);
+  --vscode-button-background: var(--primary);
+  --vscode-button-foreground: var(--primary-foreground);
+  --vscode-button-hoverBackground: color-mix(in oklab, var(--primary) 85%, black);
+  --vscode-focusBorder: var(--ring);
+  --vscode-list-hoverBackground: color-mix(in oklab, var(--foreground) 8%, transparent);
+  --vscode-list-activeSelectionBackground: color-mix(in oklab, var(--primary) 22%, transparent);
+  --vscode-input-background: var(--background);
+  --vscode-input-foreground: var(--foreground);
+  --vscode-input-border: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  min-width: 0;
+}
 .inspector-page { display: grid; gap: 1.5rem; min-width: 0; }
-.inspector-scroll { max-height: 32rem; overflow: auto; }
-.inspector-thumbnail { width: 128px; height: 128px; border-radius: var(--radius-md); border: 1px solid var(--border); }
-.inspector-json { max-height: 24rem; overflow: auto; font-family: var(--font-mono); font-size: 0.8rem; }
 .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; margin: 1.5rem 0; }
 /* Wide tables and code scroll inside the reading column instead of widening the page on phones. */
 #content, .mk-docs-content { min-width: 0; }

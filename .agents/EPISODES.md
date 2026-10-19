@@ -19,3 +19,8 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-19T22:29:24Z s=989b2bbf DONE fp=4c0d165ebb52 cov=95.1% paths=.github/workflows/pages.yml,website/ARCH.md,website/README.md,website/components/inspector.tsx(+1)
 2026-10-19T22:35:33Z s=989b2bbf DONE fp=01ac3e257f2b cov=95.1% paths=Makefile,README.md,e2e/website.spec.ts,vscode-extension/README.md(+5)
 2026-10-19T22:35:33Z s=989b2bbf FINDING website/pages/vscode.mdx:27 learn=test: e2e/website.spec.ts builds and opens every page, so an MDX parse error fails make e2e.
+2026-10-19T22:54:29Z s=989b2bbf DONE fp=56debbe4dd5a cov=95.1% paths=Makefile,e2e/website.spec.ts,vscode-extension/ARCH.md,vscode-extension/media/preview.css(+10)
+2026-10-19T22:54:29Z s=989b2bbf FINDING vscode-extension/src/webview/preview-app.tsx:filterDatablocks, viewer-panel.tsx outliner checkbox learn=test: e2e/website.spec.ts filters datablocks inside the shadow root.
+2026-10-19T22:54:29Z s=989b2bbf FINDING vscode-extension/media/preview.css:3 learn=none: A visual regression; no pixel assertion covers border colors.
+2026-10-19T22:54:29Z s=989b2bbf FINDING website/components/inspector.tsx:loadChosenFiles learn=test: The chosen-files e2e test selects two different .blend files in a row.
+2026-10-19T22:54:29Z s=989b2bbf FINDING e2e/website.spec.ts:openInspector learn=test: The helper is used by every inspector test.

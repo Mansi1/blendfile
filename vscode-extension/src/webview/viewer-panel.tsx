@@ -4,6 +4,7 @@ import type { BlendFile } from "../../../src/index.ts";
 import { type RenderScene, buildRenderScene } from "./scene-model.ts";
 import { decodeTexture } from "./texture-loader.ts";
 import { SceneViewport, type ShadingMode } from "./viewport.ts";
+import { eventElement } from "./dom-events.ts";
 
 const SHADING_MODES: { mode: ShadingMode; label: string; hint: string }[] = [
   { mode: "wireframe", label: "Wireframe", hint: "Edges only" },
@@ -104,7 +105,7 @@ export function mountViewerPanel(container: HTMLElement, blendFile: BlendFile, p
       <ul class="outliner-list" aria-label="Scene objects">
         {objects.map((object) => (
           <li key={object.name} class={object.name === selectedName ? "selected" : ""}>
-            <input type="checkbox" aria-label={`Show ${object.name}`} {...(object.visible ? { checked: true } : {})} onChange={(event: Event) => { viewport?.setObjectVisible(object.name, (event.target as HTMLInputElement).checked); }} />
+            <input type="checkbox" aria-label={`Show ${object.name}`} {...(object.visible ? { checked: true } : {})} onChange={(event: Event) => { viewport?.setObjectVisible(object.name, eventElement<HTMLInputElement>(event).checked); }} />
             <span class="kind" aria-hidden="true" title={object.kind}>{KIND_ICONS[object.kind] ?? "•"}</span>
             <button type="button" class="link" onClick={() => viewport?.select(object.name)}>{object.name}</button>
             <button type="button" class="inspect" title={`Open ${object.name} in the inspector`} aria-label={`Inspect ${object.name}`} onClick={() => options.onInspect(object.name)}>⋯</button>
