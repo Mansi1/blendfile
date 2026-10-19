@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "defuss-shadcn": {
+      "source": "kyr0/defuss-shadcn",
+      "sourceType": "github",
+      "skillPath": "skills/defuss-shadcn/SKILL.md",
+      "computedHash": "1097ca79ea91438c972c811c0ff9f821b6ca8fa2051280e458d2fccfe72e421e"
+    }
+  }
+}

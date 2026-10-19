@@ -1,0 +1,106 @@
+{
+ "blender_version": [
+  5,
+  2,
+  2
+ ],
+ "file_version": 502,
+ "scene": {
+  "name": "ProbeScene",
+  "frame_start": 7,
+  "frame_end": 42,
+  "resolution_x": 640,
+  "resolution_y": 360
+ },
+ "objects": {
+  "ProbeCube": {
+   "type": "MESH",
+   "location": [
+    1.0,
+    2.0,
+    3.0
+   ],
+   "scale": [
+    0.5,
+    0.5,
+    0.5
+   ],
+   "data": "ProbeMesh"
+  },
+  "ProbeEmpty": {
+   "type": "EMPTY",
+   "location": [
+    -4.0,
+    0.0,
+    0.5
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "data": null
+  }
+ },
+ "meshes": {
+  "ProbeMesh": {
+   "vertices": 8,
+   "faces": 6,
+   "positions": [
+    [
+     -1.0,
+     -1.0,
+     -1.0
+    ],
+    [
+     -1.0,
+     -1.0,
+     1.0
+    ],
+    [
+     -1.0,
+     1.0,
+     -1.0
+    ],
+    [
+     -1.0,
+     1.0,
+     1.0
+    ],
+    [
+     1.0,
+     -1.0,
+     -1.0
+    ],
+    [
+     1.0,
+     -1.0,
+     1.0
+    ],
+    [
+     1.0,
+     1.0,
+     -1.0
+    ],
+    [
+     1.0,
+     1.0,
+     1.0
+    ]
+   ],
+   "materials": [
+    "ProbeMaterial"
+   ]
+  }
+ },
+ "materials": {
+  "ProbeMaterial": {
+   "diffuse_color": [
+    0.25,
+    0.5,
+    0.75,
+    1.0
+   ]
+  }
+ }
+}

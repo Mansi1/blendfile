@@ -1,0 +1,203 @@
+---
+title: Using the library
+---
+import Layout from "../lib/layout.tsx"
+import { INSTALL_EXAMPLE, OPEN_EXAMPLE, NAVIGATE_EXAMPLE } from "../lib/examples.ts"
+import CodeExample from "../components/code-example.tsx"
+
+<Layout title="Using the library" description="Install blendfile and read .blend files in Node.js and the browser: datablocks, members, pointers, lists and the full API." currentRoute="/usage.html">
+<article class="mk-docs-content" aria-labelledby="page-title">
+<h1 class="mk-docs-content-title" id="page-title">Using the library</h1>
+<p class="mk-docs-content-lead">Open a file from bytes, find datablocks, read members by name and follow pointers. The same code runs in Node.js and in the browser.</p>
+<div class="mk-docs-content-prose">
+
+<ol class="mk-process-steps usage-steps" data-variant="horizontal">
+  <li class="mk-process-step">
+    <span class="mk-process-step-number" aria-hidden="true">01</span>
+    <div class="mk-process-step-body">
+      <h3 class="mk-process-step-title">Install</h3>
+      <p class="mk-process-step-desc">Build and pack the library, then add the tarball.</p>
+    </div>
+  </li>
+  <li class="mk-process-step">
+    <span class="mk-process-step-number" aria-hidden="true">02</span>
+    <div class="mk-process-step-body">
+      <h3 class="mk-process-step-title">Open bytes</h3>
+      <p class="mk-process-step-desc">From disk in Node.js, from a file input or fetch in the browser.</p>
+    </div>
+  </li>
+  <li class="mk-process-step">
+    <span class="mk-process-step-number" aria-hidden="true">03</span>
+    <div class="mk-process-step-body">
+      <h3 class="mk-process-step-title">Navigate</h3>
+      <p class="mk-process-step-desc">Datablocks, members, pointers and file info.</p>
+    </div>
+  </li>
+</ol>
+
+## Install
+
+The package is not on npm yet. Build and pack it from the repository, then add the tarball to your project:
+
+<CodeExample name="usage-install" label="Install" tabs={INSTALL_EXAMPLE} />
+
+It ships ESM and CommonJS builds with type declarations and depends on two pure-JS decompressors, `fflate` and `fzstd`. The package declares Node.js 18 or later; the tests run on Node.js 24 and Chromium.
+
+## Open a file
+
+`parseBlendFile` takes a `Uint8Array` or an `ArrayBuffer`, so the same call works with Node's `readFile`, a browser `File` and a `fetch` response. CommonJS works the same way with `require("blendfile")`. The <a href="/inspector.html">inspector</a> on this site is built this way.
+
+<CodeExample name="usage-open" label="Open a file" tabs={OPEN_EXAMPLE} />
+
+<CodeExample name="usage-navigate" label="Read data" tabs={NAVIGATE_EXAMPLE} />
+
+## Reading data
+
+**Datablocks** are found by their 2-letter ID code and name (without the code prefix):
+
+```ts
+const scene = blendFile.findDatablock("SC", "Scene");
+scene?.readMember("r.sfra"); // first frame; dotted paths walk inline structs
+scene?.readMember("r.xsch"); // render width
+```
+
+**Members** come back typed: numbers, `bigint` for 64-bit integers and pointers, strings for `char` arrays, nested arrays for C arrays, and `BlendStruct` for inline structs.
+
+```ts
+const object = blendFile.findDatablock("OB", "Cube")!;
+object.readMember("loc");        // [1, 2, 3]
+object.readMember("size");       // scale; files store Object.scale as "size"
+object.readMember("id.name");    // "OBCube"
+object.memberNames;              // every member in declaration order
+object.toJSON(1);                // plain object for logging or JSON
+```
+
+Member names are the names stored in the file, which can differ from Blender's Python names. <a href="/spec/05-sdna.html">05 SDNA</a> explains why.
+
+**Pointers** are saved addresses. Follow them to the struct they point at:
+
+```ts
+const mesh = object.followPointer("data");          // Object.data → Mesh
+const layers = scene!.readListBase("view_layers");  // ListBase → ViewLayer[]
+
+// pointer arrays and strings stored in raw blocks
+const materialAddresses = mesh!.readPointerArray("mat");
+const materials = materialAddresses.map((address) => blendFile.resolvePointer(address)[0]);
+```
+
+**Mesh vertex positions** hide the version differences:
+
+```ts
+import { readMeshVertexPositions } from "blendfile";
+const positions = readMeshVertexPositions(mesh!); // Float32Array, xyz per vertex
+```
+
+**Scenes and geometry** for 3D viewers: the objects a scene shows, with world matrices computed the way Blender does, and mesh faces as triangles. <a href="/spec/09-scenes-and-geometry.html">09 Scenes and geometry</a> lists where each value lives.
+
+```ts
+import { readScene, readMeshGeometry, triangulateMeshGeometry, readMaterialAppearance, readLight, readCamera } from "blendfile";
+
+const scene = readScene(blendFile); // first scene, or readScene(blendFile, "Scene")
+for (const object of scene.objects) {
+  object.name, object.type, object.visible; // "mesh" | "light" | "camera" | "empty" | "other"
+  object.worldMatrix;                        // Float64Array(16), column-major, Blender's matrix_world
+  if (object.type === "mesh") {
+    const geometry = readMeshGeometry(object.data!);   // positions, faceOffsets, cornerVertices, faceMaterialIndices, faceSmooth
+    const { vertexIndices } = triangulateMeshGeometry(geometry); // concave n-gons included
+    const colors = object.materials.map((material) => material && readMaterialAppearance(material).principled?.baseColor);
+  }
+  if (object.type === "light") readLight(object.data!);   // type, color, power (W), spot and area sizes
+  if (object.type === "camera") readCamera(object.data!); // lens, sensor, fit, clipping
+}
+```
+
+Modifiers, constraints and animation are not evaluated; the file stores the mesh before modifiers.
+
+**File info** without struct decoding:
+
+```ts
+blendFile.readRenderInfo(); // [{ sceneName, frameStart, frameEnd }]
+blendFile.readThumbnail();  // { width, height, rgba } top-down, or undefined
+```
+
+## Errors
+
+Every failure is a `BlendError` with a `code`:
+
+| Code | Meaning |
+|------|---------|
+| `NOT_BLEND` | the bytes are not a .blend file (no `BLENDER` magic after decompression) |
+| `UNSUPPORTED` | a Blender file this version cannot decode (unknown header variant), or a member path that does not exist |
+| `CORRUPT` | truncated data, a block that runs past the end, broken compression or SDNA |
+
+```ts
+import { BlendError, parseBlendFile } from "blendfile";
+
+try {
+  parseBlendFile(bytes);
+} catch (error) {
+  if (error instanceof BlendError) console.error(error.code, error.message);
+}
+```
+
+## API reference
+
+### High-level API
+
+| Export | Description |
+|--------|-------------|
+| `parseBlendFile(bytes)` | decompress and open a file; returns `BlendFile` |
+| `BlendFile` | `header`, `blocks`, `sdna`, `compressionMethod`, `blenderVersion`, `listDatablocks(idCode?)`, `findDatablock(idCode, name)`, `findBlockByAddress(address, referencingOffset?)`, `structTypeOfBlock(block)`, `readStructsInBlock(block, structType?)`, `resolvePointer(address, structTypeName?, referencingOffset?)`, `readPointerArrayAt(address, referencingOffset?)`, `readPrimitiveArrayAt(address, typeName, referencingOffset?)`, `readStringAt(address, referencingOffset?)`, `readRenderInfo()`, `readThumbnail()`. Pass `referencingOffset` (the file offset of the struct holding the pointer) for data pointers in Blender 5.x files, or use `BlendStruct`'s methods, which do it |
+| `BlendStruct` | `structType`, `offset`, `memberNames`, `datablockName`, `readMember(path)`, `readPointer(path)`, `followPointer(path, structTypeName?)`, `followPointerToArray(path, structTypeName?)`, `readPointerArray(path)`, `readPrimitiveArray(path, typeName)`, `readString(path)`, `readListBase(path)`, `toJSON(depth?)` |
+| `readMeshVertexPositions(mesh)` | vertex positions of a `Mesh` as a `Float32Array` |
+| `readMeshGeometry(mesh)` | `MeshGeometry`: positions, face offsets, corner vertices, material slot and smooth flag per face (Blender 3.6+ and older `mpoly`/`mloop`) |
+| `triangulateMeshGeometry(geometry)` | `MeshTriangles`: three vertex indices per triangle, the face corner of each and the face each triangle came from |
+| `listMeshUvMaps(mesh)` | names of the mesh's UV maps and the render UV map (what a Texture Coordinate node's UV output reads) |
+| `readMeshUvMap(mesh, name?)` | `MeshUvMap`: u, v per face corner of the named or the render UV map; undefined without UV maps |
+| `readMeshAttribute(mesh, name, typeName, count)` | values of a named mesh attribute or CustomData layer, e.g. `"material_index"` |
+| `readScene(file, sceneName?)` | `SceneDescription`: the view layer's objects (`SceneObject`: type, world matrix, visibility, materials), scene camera, world color, resolution |
+| `computeObjectWorldMatrix(object)` | an object's world matrix from loc/rot/scale, deltas, rotation mode and parents |
+| `readObjectMaterials(object)` | material per slot, honoring object- versus data-linked slots |
+| `readMaterialAppearance(material)` | `MaterialAppearance`: viewport color, metallic, roughness, unlinked Principled BSDF inputs, and `textures` (`MaterialTexture`: image path, packed bytes, color space, UV map, Mapping node) for Image Texture nodes feeding Base Color, Metallic, Roughness and, through a Normal Map node, Normal |
+| `readLight(lamp)` | `LightDescription`: type, color, power, spot and area settings |
+| `readCamera(camera)` | `CameraDescription`: projection, lens, sensor and fit, clipping, shift |
+| `BlendError` | error with `code`: `NOT_BLEND`, `UNSUPPORTED` or `CORRUPT` |
+
+### Core functions
+
+Each decodes one layer and can be used on its own, for example to list blocks without decoding structs.
+
+| Export | Description |
+|--------|-------------|
+| `detectCompressionMethod(bytes)` | `"none"`, `"gzip"` or `"zstd"` from the magic bytes |
+| `decompressFileBytes(bytes)` | `{ uncompressedBytes, compressionMethod }` |
+| `decodeFileHeader(bytes)` | `FileHeader`: size, format version, pointer size, byte order, file version, block header layout |
+| `readBlockList(bytes, header)` | every `Block` up to `ENDB` |
+| `createAddressResolver(blocks)` | resolves a saved address the way Blender does: within the referencing datablock's `DATA` blocks first (Blender 5.x reuses addresses across datablocks) |
+| `indexBlocksByAddress(blocks)` | map from saved address to block, first block wins |
+| `isDatablockBlock(block)`, `datablockIdCode(block)` | datablock detection; ID code with screens mapped from `SN` to `SR` |
+| `decodeSdna(payload, littleEndian)` | the `Sdna` catalog: names, types, sizes, structs with member offsets |
+| `parseMemberDeclarator(declarator)` | split `*next`, `mat[4][4]`, `(*func)()` into name, pointer depth and array dimensions |
+| `createReadContext(bytes, header)` | the `ReadContext` the value readers share |
+| `readPrimitiveValue`, `readPointerValue`, `isPrimitiveType`, `decodeNulTerminatedString` | single values |
+| `readMemberValue`, `nestByArrayDimensions` | one struct member, with C arrays as nested arrays |
+| `readPointerArray`, `readPrimitiveArray`, `readStringPayload` | raw block payloads |
+| `readRenderInfo(context, blocks)`, `readThumbnail(context, blocks)` | `REND` and `TEST` blocks |
+| `composeObjectLocalMatrix(members)`, `multiplyMatrices(left, right)`, `createIdentityMatrix()`, `matrixFromNestedColumns(columns)` | column-major 4×4 `Matrix4` math in Blender's conventions |
+| `eulerToMatrix3(euler, rotationMode)`, `quaternionToMatrix3(quaternion)`, `axisAngleToMatrix3(axis, angle)` | rotations as Blender computes them (XYZ order is Rz · Ry · Rx) |
+| `triangulatePolygon(positions, cornerVertices)` | ear-clipping triangulation of one face, concave faces included |
+| `triangulatePolygonCorners(positions, cornerVertices)` | the same triangles as positions within `cornerVertices`, to look up per-corner data such as UVs |
+
+## Supported files
+
+| File | Status |
+|------|--------|
+| Blender 5.x (17-byte header, `LargeBHead8`) | tested with Blender 5.2.2 files |
+| Blender 2.5 to 4.x, 64-bit little endian (`SmallBHead8`) | tested with Blender 4.3.0 files |
+| zstd (Blender 3.0+) and gzip (before 3.0) | tested |
+| 32-bit (`BHead4`) and big-endian files | decoded per the specification; tested with synthetic files only |
+| Mesh positions before Blender 3.4 (`mvert`) | supported in `readMeshVertexPositions`; no test file |
+
+</div>
+</article>
+</Layout>

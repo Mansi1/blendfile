@@ -1,0 +1,9 @@
+**
+!package.json
+!README.md
+!CHANGELOG.md
+!LICENSE
+!dist/extension.cjs
+!media/preview.js
+!media/preview.css
+!media/icon.png

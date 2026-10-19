@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="blendfile">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3925f"/>
+      <stop offset="1" stop-color="#d4452a"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#tile)"/>
+  <!-- an isometric cube whose sides are stacked layers: the blocks of a file -->
+  <path d="M32 10 52 21.5 32 33 12 21.5Z" fill="#fff7f2"/>
+  <path d="M12 21.5 32 33v22L12 43.5Z" fill="#334c82"/>
+  <path d="M52 21.5 32 33v22l20-11.5Z" fill="#4f71a3"/>
+  <path d="M12 29 32 40.5M12 36.3l20 11.5" stroke="#8fb0d4" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M52 29 32 40.5M52 36.3 32 47.8" stroke="#a9c3e0" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M32 33v22" stroke="#26396a" stroke-width="1.2"/>
+</svg>

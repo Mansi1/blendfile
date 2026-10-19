@@ -1,0 +1,85 @@
+{
+  "name": "blendfile-preview",
+  "displayName": "Blend File Preview",
+  "description": "View Blender .blend files in VS Code: a 3D view of the scene like Blender's viewport, plus thumbnail, datablocks and a struct browser.",
+  "version": "0.3.0",
+  "publisher": "blendfile",
+  "license": "MIT",
+  "author": "Michael Mannseicher <mad.mansi90@gmail.com>",
+  "homepage": "https://github.com/Mansi1/blendfile#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mansi1/blendfile.git",
+    "directory": "vscode-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/Mansi1/blendfile/issues"
+  },
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.3.9",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "blender",
+    "blend",
+    "3d",
+    "preview",
+    "sdna"
+  ],
+  "main": "./dist/extension.cjs",
+  "browser": "./dist/extension.cjs",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "blendfile.preview",
+        "displayName": "Blend File Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.blend"
+          },
+          {
+            "filenamePattern": "*.blend1"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "commands": [
+      {
+        "command": "blendfile.openPreview",
+        "title": "Open Blend File Preview",
+        "category": "Blend"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "blendfile.openPreview",
+          "when": "resourceExtname == .blend || resourceExtname == .blend1",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "cd .. && make vscode-extension",
+    "package": "cd .. && make vscode-package",
+    "test": "cd .. && make vscode-e2e"
+  },
+  "devDependencies": {
+    "oxlint": "1.88.0"
+  }
+}

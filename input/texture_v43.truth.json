@@ -1,0 +1,138 @@
+{
+  "blenderVersion": "4.3.0",
+  "uvMaps": {
+    "UVMap": [
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0
+    ],
+    "Second": [
+      0.0,
+      1.0,
+      0.1,
+      0.9,
+      0.2,
+      0.8,
+      0.3,
+      0.7
+    ]
+  },
+  "renderUvMap": "UVMap",
+  "images": {
+    "BaseImage": {
+      "filepath": "//textures/texture_base.png",
+      "colorSpace": "sRGB",
+      "packed": false
+    },
+    "RoughImage": {
+      "filepath": "//textures/texture_rough.png",
+      "colorSpace": "Non-Color",
+      "packed": true
+    },
+    "NormalImage": {
+      "filepath": "//textures/texture_normal.exr",
+      "colorSpace": "Non-Color",
+      "packed": false
+    }
+  },
+  "mapping": {
+    "location": [
+      0.25,
+      0.5,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.30000001192092896
+    ],
+    "scale": [
+      2.0,
+      3.0,
+      1.0
+    ]
+  },
+  "normalStrength": 0.699999988079071,
+  "packedRoughSize": 184,
+  "objects": {
+    "TexturedPlane": {
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "visible": true
+    },
+    "Cam": {
+      "location": [
+        0.0,
+        0.0,
+        6.0
+      ],
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          6.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "visible": true
+    }
+  },
+  "meshes": {
+    "TexturedPlaneMesh": {
+      "vertices": 4,
+      "triangles": 2
+    }
+  }
+}

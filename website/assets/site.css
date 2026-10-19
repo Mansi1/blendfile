@@ -1,0 +1,126 @@
+/* Page grid only; colors, type and spacing come from defuss-shadcn tokens. */
+body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+.site-shell { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 2rem; max-width: 80rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.site-shell > .mk-docs-navigation { position: sticky; top: 4.5rem; align-self: start; max-height: calc(100vh - 6rem); overflow: auto; }
+@media (max-width: 52rem) {
+  .site-shell { grid-template-columns: minmax(0, 1fr); }
+  .site-shell > .mk-docs-navigation { position: static; max-height: none; }
+}
+.inspector-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1rem; }
+.inspector-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+@media (min-width: 110rem) { .inspector-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); align-items: start; } }
+.inspector-page { display: grid; gap: 1.5rem; min-width: 0; }
+.inspector-scroll { max-height: 32rem; overflow: auto; }
+.inspector-thumbnail { width: 128px; height: 128px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+.inspector-json { max-height: 24rem; overflow: auto; font-family: var(--font-mono); font-size: 0.8rem; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+/* Wide tables and code scroll inside the reading column instead of widening the page on phones. */
+#content, .mk-docs-content { min-width: 0; }
+.mk-docs-content { grid-template-columns: minmax(0, 1fr); }
+.mk-docs-content-prose table { display: block; max-width: 100%; overflow-x: auto; }
+.mk-docs-content-prose pre { max-width: 100%; overflow-x: auto; }
+.mk-docs-content-prose code { overflow-wrap: anywhere; }
+
+/* ---------- Brand ---------- */
+.navbar-brand { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; letter-spacing: -0.01em; }
+.navbar-brand img { width: 1.75rem; height: 1.75rem; }
+
+/* ---------- Home ---------- */
+.home { display: grid; gap: 3.5rem; min-width: 0; }
+.home .mk-hero { border-radius: calc(var(--radius) * 2); overflow: hidden; }
+.home-hero-icon { width: 5.5rem; height: 5.5rem; filter: drop-shadow(0 12px 24px color-mix(in oklab, var(--primary) 35%, transparent)); }
+.home-section { display: grid; gap: 1.25rem; min-width: 0; }
+.home-section > header { display: grid; gap: 0.5rem; max-width: 46rem; }
+.home-section > header h2 { margin: 0; font-size: clamp(1.5rem, 2.5vw, 2rem); letter-spacing: -0.02em; }
+.home-section > header p { margin: 0; color: var(--muted-foreground); line-height: 1.6; }
+.home-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary); }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; }
+.feature-card { border-top: 4px solid var(--feature-accent, var(--primary)); }
+.feature-card .card-title { display: flex; align-items: center; gap: 0.6rem; }
+.feature-glyph { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: var(--radius-md); background: color-mix(in oklab, var(--feature-accent, var(--primary)) 18%, transparent); color: var(--foreground); font-size: 1rem; }
+
+/* ---------- Graphics: shared ---------- */
+.graphic { margin: 0; padding: 1.25rem; border: 1px solid var(--border); border-radius: calc(var(--radius) * 1.5); background: var(--card); display: grid; gap: 1rem; min-width: 0; }
+.graphic figcaption { color: var(--muted-foreground); font-size: 0.875rem; line-height: 1.5; }
+.graphic ol, .graphic ul { list-style: none; margin: 0; padding: 0; }
+
+/* Fill tones for structure diagrams; text inside a fill is chosen per fill for contrast in both themes. */
+[data-tone="header"] { --fill: var(--primary); --ink: #ffffff; }
+[data-tone="special"] { --fill: var(--chart-2); --ink: #2b1a14; }
+[data-tone="datablock"] { --fill: var(--chart-3); --ink: #ffffff; }
+[data-tone="data"] { --fill: var(--chart-1); --ink: #14213a; }
+[data-tone="catalog"] { --fill: var(--chart-5); --ink: #ffffff; }
+[data-tone="end"] { --fill: var(--muted); --ink: var(--foreground); }
+
+/* ---------- File anatomy ---------- */
+.anatomy-strip { display: flex; gap: 2px; overflow-x: auto; }
+.anatomy-part { flex: 1 1 0; min-width: 4.25rem; padding: 0.6rem 0.5rem; background: var(--fill); color: var(--ink); display: grid; gap: 0.15rem; text-align: center; }
+.anatomy-part:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+.anatomy-part:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+.anatomy-part strong { font-family: var(--font-mono); font-size: 0.85rem; }
+.anatomy-part span { font-size: 0.7rem; opacity: 0.85; }
+.anatomy-zoom { position: relative; height: 2rem; display: grid; place-items: center; }
+.anatomy-zoom::before { content: ""; position: absolute; inset: 0 30% 0 30%; border: 2px dashed color-mix(in oklab, var(--chart-3) 60%, transparent); border-top: 0; border-radius: 0 0 var(--radius-md) var(--radius-md); }
+.anatomy-zoom span { position: relative; font-size: 0.75rem; color: var(--muted-foreground); background: var(--card); padding: 0 0.5rem; }
+.anatomy-block { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 2px; }
+@media (max-width: 40rem) { .anatomy-block { grid-template-columns: minmax(0, 1fr); } }
+.anatomy-bytes { display: flex; gap: 2px; }
+.anatomy-field { flex: 1 1 0; min-width: 0; display: grid; gap: 0.3rem; padding: 0.5rem 0.4rem; background: color-mix(in oklab, var(--chart-3) 14%, var(--card)); }
+.anatomy-field:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+.anatomy-field strong { font-family: var(--font-mono); font-size: 0.8rem; }
+.anatomy-field > span:last-child { font-size: 0.7rem; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.anatomy-cells { display: grid; grid-template-columns: repeat(var(--cells), minmax(0, 1fr)); gap: 2px; }
+.anatomy-cells i { height: 0.7rem; border-radius: 2px; background: var(--chart-3); }
+.anatomy-payload { display: grid; gap: 0.3rem; align-content: center; padding: 0.5rem 0.75rem; background: var(--chart-1); color: #14213a; border-radius: 0 var(--radius-md) var(--radius-md) 0; font-size: 0.8rem; }
+.anatomy-payload strong { font-family: var(--font-mono); }
+.anatomy-payload code { background: transparent; color: inherit; font-weight: 600; }
+
+/* ---------- Pointer hops ---------- */
+.pointer-hops { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1.75rem; counter-reset: hop; }
+.pointer-hop { position: relative; display: grid; gap: 0.35rem; padding: 0.9rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border); background: color-mix(in oklab, var(--primary) 6%, var(--card)); min-width: 0; }
+.pointer-hop::before { content: attr(data-step); position: absolute; top: -0.7rem; left: 0.9rem; width: 1.4rem; height: 1.4rem; border-radius: 999px; display: grid; place-items: center; font-size: 0.75rem; font-weight: 700; background: var(--primary); color: var(--primary-foreground); }
+.pointer-hop:not(:last-child)::after { content: "→"; position: absolute; right: -1.45rem; top: 50%; translate: 0 -50%; font-size: 1.2rem; color: var(--primary); }
+.pointer-hop-block { font-size: 0.72rem; color: var(--muted-foreground); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.pointer-hop-member { font-size: 0.8rem; overflow-wrap: anywhere; }
+@media (max-width: 52rem) { .pointer-hop:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -1.6rem; translate: -50% 0; } }
+
+/* ---------- Byte share chart (palette validated with the dataviz checks, light and dark) ---------- */
+.share-chart { --share-interface: #2a78d6; --share-scene: #eb6834; --share-catalog: #1baf7a; --share-fileInfo: #eda100; }
+.dark .share-chart { --share-interface: #3987e5; --share-scene: #d95926; --share-catalog: #199e70; --share-fileInfo: #c98500; }
+[data-category="interface"] { --share: var(--share-interface); }
+[data-category="scene"] { --share: var(--share-scene); }
+[data-category="catalog"] { --share: var(--share-catalog); }
+[data-category="fileInfo"] { --share: var(--share-fileInfo); }
+.share-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.85rem; color: var(--foreground); }
+.share-legend li, .share-values span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.share-swatch { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 3px; background: var(--share); }
+.share-row { display: grid; gap: 0.4rem; }
+.share-row-label { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; }
+.share-row-label span { color: var(--muted-foreground); }
+.share-bar { display: flex; gap: 2px; height: 24px; }
+.share-segment { flex: 0 0 auto; background: var(--share); min-width: 2px; outline-offset: 2px; }
+.share-segment:first-child { border-radius: 4px 0 0 4px; }
+.share-segment:last-child { border-radius: 0 4px 4px 0; }
+.share-segment:hover, .share-segment:focus-visible { filter: brightness(1.08); }
+.share-values { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; font-size: 0.8rem; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.share-table summary { cursor: pointer; font-size: 0.85rem; color: var(--muted-foreground); }
+.share-table table { width: 100%; margin-top: 0.75rem; border-collapse: collapse; font-size: 0.8rem; display: block; overflow-x: auto; }
+.share-table th, .share-table td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border); }
+
+/* ---------- Usage steps ---------- */
+.usage-steps { margin: 0.5rem 0 1rem; }
+.usage-steps .mk-code-block { margin-top: 0.75rem; }
+
+/* Code example tabs: defuss-shadcn ships rules for npm / pnpm / bun only; these cover indexed tabs. */
+.mk-code-block:has(input[value="tab-0"]:checked) [data-tab="tab-0"],
+.mk-code-block:has(input[value="tab-1"]:checked) [data-tab="tab-1"],
+.mk-code-block:has(input[value="tab-2"]:checked) [data-tab="tab-2"],
+.mk-code-block:has(input[value="tab-3"]:checked) [data-tab="tab-3"],
+.mk-code-block:has(input[value="tab-4"]:checked) [data-tab="tab-4"],
+.mk-code-block:has(input[value="tab-5"]:checked) [data-tab="tab-5"] { display: block; }
+.mk-code-block-tabs { overflow-x: auto; }
+.home > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.mk-hero-pill { white-space: normal; text-align: center; }
+@media (max-width: 40rem) { .mk-stats-band { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mk-hero-actions { flex-wrap: wrap; justify-content: center; } }
+/* On phones the navbar and the spec index carry navigation; the sidebar would push content down a full screen. */
+@media (max-width: 52rem) { .site-shell > .mk-docs-navigation { display: none; } }
