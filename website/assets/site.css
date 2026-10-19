@@ -9,6 +9,9 @@ body { margin: 0; background: var(--background); color: var(--foreground); font-
 .inspector-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1rem; }
 .inspector-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
 @media (min-width: 110rem) { .inspector-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); align-items: start; } }
+.screenshot { margin: 1.5rem 0; display: grid; gap: 0.5rem; }
+.screenshot img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.screenshot figcaption { color: var(--muted-foreground); font-size: 0.875rem; }
 .inspector-page { display: grid; gap: 1.5rem; min-width: 0; }
 .inspector-scroll { max-height: 32rem; overflow: auto; }
 .inspector-thumbnail { width: 128px; height: 128px; border-radius: var(--radius-md); border: 1px solid var(--border); }

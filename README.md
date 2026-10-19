@@ -10,6 +10,8 @@ Read Blender `.blend` files in browsers and Node.js. The library handles:
 
 The repository also contains a written specification of the format (`spec/`), a documentation website with an in-browser inspector (`website/`) and a VS Code extension that previews `.blend` files (`vscode-extension/`).
 
+Website: https://mansi1.github.io/blendfile/. The extension's `.vsix` can be downloaded from https://mansi1.github.io/blendfile/vscode.html.
+
 ## Install
 
 The package is not on npm yet. Build and pack it, then add the tarball:
@@ -72,7 +74,7 @@ Every failure throws `BlendError` with `code` `NOT_BLEND`, `UNSUPPORTED` or `COR
 | `input/` | fixtures written by Blender 4.3.0 and 5.2.2, with Blender's own values in `*.truth.json` |
 | `tools/make_fixtures.py` | regenerates the fixtures: `Blender -b --factory-startup --python tools/make_fixtures.py -- input v43` |
 | `tools/make_scene_fixture.py` | regenerates the scene fixtures for the 3D view: `… --python tools/make_scene_fixture.py -- input scene_v43` |
-| `website/` | defuss-ssg site: overview, specification, library docs, inspector |
+| `website/` | defuss-ssg site: overview, specification, library docs, inspector, VS Code extension page |
 | `vscode-extension/` | VS Code custom editor for `.blend` and `.blend1` files: a 3D view of the scene and an inspector; see its README |
 | `e2e/` | packed-library consumer test, Playwright tests of the website and the extension's webview |
 

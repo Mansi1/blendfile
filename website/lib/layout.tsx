@@ -15,12 +15,14 @@ const PRIMARY_LINKS = [
   { route: "/spec/index.html", label: "Specification" },
   { route: "/usage.html", label: "Library" },
   { route: "/inspector.html", label: "Inspector" },
+  { route: "/vscode.html", label: "VS Code" },
 ];
 
 const GUIDE_LINKS = [
   { route: "/", label: "Overview" },
   { route: "/usage.html", label: "Using the library" },
   { route: "/inspector.html", label: "Inspector" },
+  { route: "/vscode.html", label: "VS Code extension" },
 ];
 
 // Applied before first paint so the page does not flash light in dark mode.

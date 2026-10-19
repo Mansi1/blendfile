@@ -17,3 +17,5 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-19T22:27:52Z s=989b2bbf DONE fp=0e7970dc8f39 cov=95.1% paths=.github/workflows/pages.yml,website/ARCH.md,website/README.md,website/components/inspector.tsx(+1)
 2026-10-19T22:27:52Z s=989b2bbf FINDING website/config.ts:basePlugin learn=none: Not mechanically checked in CI: the e2e suite serves the site at the root; a regression would show as broken pages only on GitHub Pages.
 2026-10-19T22:29:24Z s=989b2bbf DONE fp=4c0d165ebb52 cov=95.1% paths=.github/workflows/pages.yml,website/ARCH.md,website/README.md,website/components/inspector.tsx(+1)
+2026-10-19T22:35:33Z s=989b2bbf DONE fp=01ac3e257f2b cov=95.1% paths=Makefile,README.md,e2e/website.spec.ts,vscode-extension/README.md(+5)
+2026-10-19T22:35:33Z s=989b2bbf FINDING website/pages/vscode.mdx:27 learn=test: e2e/website.spec.ts builds and opens every page, so an MDX parse error fails make e2e.

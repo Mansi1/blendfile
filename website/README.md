@@ -1,11 +1,12 @@
 # blendfile website
 
-Static documentation site for `blendfile`, built with defuss-ssg, defuss JSX and defuss-shadcn. It has four parts:
+Static documentation site for `blendfile`, built with defuss-ssg, defuss JSX and defuss-shadcn. It has five parts:
 
 - an overview of the format and the library
 - the specification, rendered from `../spec/*.md`
 - the library guide and API reference
 - an inspector that parses `.blend` files in the browser
+- a page for the VS Code extension, with its `.vsix` for download (`make website-assets` packs and copies it)
 
 | Command (from this folder) | Does |
 |----------------------------|------|
