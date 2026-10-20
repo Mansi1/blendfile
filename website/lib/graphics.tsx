@@ -1,9 +1,10 @@
 // Build-time graphics for the overview page. Numbers come from the fixtures in input/, read with the library.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { type BlendFile, datablockIdCode, isDatablockBlock, parseBlendFile } from "../../src/index.ts";
+import { type BlendFile, datablockIdCode, isDatablockBlock, parseBlendFile } from "blendfile";
+import { REPOSITORY_ROOT } from "./site.ts";
 
-const openFixture = (fileName: string) => parseBlendFile(readFileSync(join(process.cwd(), "input", fileName)));
+const openFixture = (fileName: string) => parseBlendFile(readFileSync(join(REPOSITORY_ROOT, "input", fileName)));
 const formatHex = (address: bigint) => `0x${address.toString(16)}`;
 const formatKilobytes = (byteCount: number) => `${(byteCount / 1024).toFixed(0)} KB`;
 

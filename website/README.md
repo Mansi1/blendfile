@@ -6,15 +6,15 @@ Static documentation site for `blendfile`, built with defuss-ssg, defuss JSX and
 - the specification, rendered from `../spec/*.md`
 - the library guide and API reference
 - an inspector that runs the VS Code extension's preview (3D view and struct browser) in the browser
-- a page for the VS Code extension, with its `.vsix` for download (`make website-assets` packs and copies it)
+- a page for the VS Code extension, with its `.vsix` for download (`make website` packs it, and the vendor plugin in `config.ts` copies it)
 
 | Command (from this folder) | Does |
 |----------------------------|------|
 | `bun run dev` | dev server on http://localhost:3000 |
 | `bun run build` | static build into `dist/` |
-| `bun run serve` | serve `dist/` on http://localhost:4173 |
+| `bun run serve` | serve `dist/` on http://localhost:4173/blendfile/ (Vite preview) |
 | `bun run preview` | build, then serve |
 
-The scripts change to the repository root before running defuss-ssg; `ARCH.md` explains why.
+`bun run build` needs the packed VS Code extension (`make vscode-package`); `make website` runs both. The scripts need Node 22 or newer for defuss-ssg (`scripts/check-node.mjs`).
 
-Every push to `main` publishes the site to GitHub Pages at https://mansi1.github.io/blendfile/ (`.github/workflows/pages.yml`). To build for a sub-path yourself, set `SITE_BASE`, for example `SITE_BASE=/blendfile/ make website`.
+Every push to `main` publishes the site to GitHub Pages at https://mansi1.github.io/blendfile/ (`.github/workflows/pages.yml`). URLs are page-relative, so the same build works at any path; `make start` serves it at http://localhost:4173/blendfile/.

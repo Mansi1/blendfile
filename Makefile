@@ -5,8 +5,8 @@
 # Toolchain: new projects start on bun (JS/TS) or uv (Python); each placeholder names the default recipe.
 # RUN e.g. `bun run src/index.ts` (bun loads .env) | `uv run --env-file .env python -m app`; apps log ISO-8601 UTC first, exit cleanly on SIGTERM.
 NAME ?= website
-# Serves the built website (make website) on http://localhost:4173.
-RUN  ?= bunx defuss-ssg serve website --port 4173 --skip-setup
+# Serves the built website (make website) on http://localhost:4173/blendfile/, the path GitHub Pages uses.
+RUN  ?= cd website && bunx vite preview --config preview.config.ts --outDir dist --base /blendfile/ --port 4173 --strictPort
 N    ?= 50
 export RUN
 # Config: KEY=value lines of the gitignored .env reach every recipe and the app `start` runs. Make reads them, so
@@ -23,7 +23,7 @@ LOG   = var/log/$(NAME)
 PID   = tmp/$(NAME).pid
 ALIVE = [ -f $(PID) ] && kill -0 "$$(cat $(PID))" 2>/dev/null
 
-.PHONY: help setup start stop restart status log metrics bench test coverage lint e2e verify build website website-assets dev vscode-extension vscode-package vscode-e2e vscode-publish
+.PHONY: help setup start stop restart status log metrics bench test coverage lint e2e verify build website dev vscode-extension vscode-package vscode-e2e vscode-publish
 .DEFAULT_GOAL := help
 
 help: ## list the verbs with their usage (default goal)
@@ -71,22 +71,13 @@ bench:    ; @echo "∅ bench: no performance claims made"  ## measure hot paths 
 build: ## build the library into dist/ (ESM, CJS, type declarations)
 	bun run build
 
-# defuss-ssg copies the site into .ssg-temp/ next to the working directory; run from the repo root so
-# website/components can import the library as ../../src/index.ts in dev and build alike.
-website-assets: vscode-package ## copy defuss-shadcn bundles, sample .blend files, the extension .vsix and its preview styles into website/assets
-	@mkdir -p website/assets/vendor website/assets/samples
-	cp node_modules/defuss-shadcn/dist/components/core.min.css node_modules/defuss-shadcn/dist/components/all.min.css node_modules/defuss-shadcn/dist/components/all.min.js node_modules/defuss-shadcn/dist/theme/tangerine.css node_modules/defuss-shadcn/dist/components/mermaid/mermaid.min.css node_modules/defuss-shadcn/dist/components/mermaid/mermaid.min.js website/assets/vendor/
-	@mkdir -p website/assets/samples/textures
-	cp input/v43.blend input/scene_v52.blend input/texture_v43.blend website/assets/samples/
-	cp input/textures/texture_base.png input/textures/texture_normal.exr website/assets/samples/textures/
-	cp vscode-extension/media/preview.css website/assets/vendor/blend-preview.css
-	cp vscode-extension/blendfile-preview.vsix website/assets/
+# The website's own scripts run defuss-ssg in website/ (website/package.json). The vendor plugin in website/config.ts
+# copies the UI, the samples and the packed extension into website/assets, so the .vsix must exist first.
+website: vscode-package ## build the static website into website/dist
+	cd website && bun run build
 
-website: website-assets ## build the static website into website/dist
-	bunx defuss-ssg build website --skip-setup
-
-dev: website-assets ## run the website dev server on http://localhost:3000
-	bunx defuss-ssg dev website --skip-setup
+dev: vscode-package ## run the website dev server on http://localhost:3000
+	cd website && bun run dev
 
 # VS Code extension: host bundle (CJS, also loadable by vscode.dev), webview bundle (IIFE), integration suite.
 vscode-extension: ## bundle the VS Code extension into vscode-extension/dist and media/preview.js

@@ -1,7 +1,7 @@
 // Client-side .blend inspector: the VS Code extension's preview (3D view and inspector) running in the page through the
 // blendfile library; nothing is uploaded. The preview lives in a shadow root so its styles and the site's stay apart.
 import { createRef } from "defuss";
-import { type PreviewApp, createPreviewApp } from "../../vscode-extension/src/webview/preview-app.tsx";
+import { type PreviewApp, createPreviewApp } from "blendfile-preview";
 
 // VERIFIED: relative to the inspector page at the site root, so they also resolve when the site is served under a sub-path.
 const SAMPLES = [

@@ -2,6 +2,7 @@
 import type { Props } from "defuss";
 import ThemeToggle from "../components/theme-toggle.js";
 import { listSpecPages } from "./spec.ts";
+import { UI_SCRIPTS } from "./ui.ts";
 
 export interface LayoutProps extends Props {
   title: string;
@@ -37,8 +38,6 @@ const currentAttribute = (route: string, currentRoute: string) => (route === cur
 
 export default function Layout({ title, description, currentRoute, children }: LayoutProps) {
   const specPages = listSpecPages();
-  // Since defuss-shadcn 0.9.10 Mermaid ships outside all.*; only the spec pages have diagrams.
-  const hasDiagrams = currentRoute.startsWith("/spec/");
   return (
     <html lang="en">
       <head>
@@ -47,11 +46,9 @@ export default function Layout({ title, description, currentRoute, children }: L
         <meta name="description" content={description} />
         <title>{`${title} · blendfile`}</title>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
-        <link rel="stylesheet" href="/assets/vendor/core.min.css" />
+        <link rel="stylesheet" href="/assets/vendor/ui.css" />
         <link rel="stylesheet" href="/assets/vendor/tangerine.css" />
-        <link rel="stylesheet" href="/assets/vendor/all.min.css" />
         <link rel="icon" type="image/svg+xml" href="/assets/icon.svg" />
-        {hasDiagrams && <link rel="stylesheet" href="/assets/vendor/mermaid.min.css" />}
         <link rel="stylesheet" href="/assets/site.css" />
       </head>
       <body>
@@ -94,8 +91,8 @@ export default function Layout({ title, description, currentRoute, children }: L
           </nav>
           <main id="content">{children}</main>
         </div>
-        <script type="module" src="/assets/vendor/all.min.js"></script>
-        {hasDiagrams && <script type="module" src="/assets/vendor/mermaid.min.js"></script>}
+        <script type="module" src="/assets/vendor/core.min.js"></script>
+        {UI_SCRIPTS.map((component) => <script type="module" src={`/assets/vendor/${component}.min.js`} key={component}></script>)}
       </body>
     </html>
   );

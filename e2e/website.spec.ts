@@ -11,7 +11,8 @@ const listHtmlRoutes = (directory: string): string[] =>
   readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const entryPath = join(directory, entry.name);
     if (entry.isDirectory()) return entry.name === "assets" || entry.name === "components" ? [] : listHtmlRoutes(entryPath);
-    return entry.name.endsWith(".html") ? [`/${relative(distDirectory, entryPath)}`.replace(/\/index\.html$/, "/").replace(/^\/index\.html$/, "/")] : [];
+    // Routes are relative to the site's base URL (/blendfile/, as on GitHub Pages): "" is the overview.
+    return entry.name.endsWith(".html") ? [relative(distDirectory, entryPath).replace(/(^|\/)index\.html$/, "$1")] : [];
   });
 
 const collectPageErrors = (page: Page) => {
@@ -22,15 +23,17 @@ const collectPageErrors = (page: Page) => {
 };
 
 const ROUTES = listHtmlRoutes(distDirectory);
+/** The path GitHub Pages serves the site under; playwright.config.ts serves the build there too. */
+const BASE_PATH = "/blendfile/";
 
 /** Opens the inspector page and waits for hydration: the preview's shadow root exists once the handlers are attached. */
 async function openInspector(page: Page) {
-  await page.goto("/inspector.html");
+  await page.goto("inspector.html");
   await page.waitForFunction(() => document.querySelector("#inspector-preview")?.shadowRoot);
 }
 
 test("the build contains the expected pages", () => {
-  expect(ROUTES).toEqual(expect.arrayContaining(["/", "/usage.html", "/inspector.html", "/vscode.html", "/spec/", "/spec/05-sdna.html"]));
+  expect(ROUTES).toEqual(expect.arrayContaining(["", "usage.html", "inspector.html", "vscode.html", "spec/", "spec/05-sdna.html", "404.html"]));
 });
 
 for (const route of ROUTES) {
@@ -41,7 +44,7 @@ for (const route of ROUTES) {
     await expect(page.getByRole("navigation", { name: "Main" })).toBeVisible();
     await expect(page.locator("h1").first()).toBeVisible();
     await expect(page).toHaveTitle(/· blendfile$/);
-    const fileName = route === "/" ? "home" : route.replace(/^\//, "").replace(/\/$/, "/index").replace(/[/.]/g, "_");
+    const fileName = route === "" ? "home" : route.replace(/\/$/, "/index").replace(/[/.]/g, "_");
     await page.screenshot({ path: join(screenshotDirectory, `${fileName}.png`), fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -50,9 +53,9 @@ for (const route of ROUTES) {
 }
 
 test("the VS Code page offers the packed extension for download", async ({ page, request }) => {
-  await page.goto("/vscode.html");
+  await page.goto("vscode.html");
   const download = page.getByRole("link", { name: /Download blendfile-preview\.vsix/ });
-  const response = await request.get((await download.getAttribute("href"))!);
+  const response = await request.get(await download.evaluate((link: HTMLAnchorElement) => link.href));
   expect(response.status()).toBe(200);
   // A .vsix is a zip archive.
   expect(Array.from((await response.body()).subarray(0, 4))).toEqual([0x50, 0x4b, 0x03, 0x04]);
@@ -62,21 +65,44 @@ test("the VS Code page offers the packed extension for download", async ({ page,
   }
 });
 
+test("page links have no .html and each one opens its own page", async ({ page, request }) => {
+  const checked = new Map<string, string>();
+  for (const route of ROUTES) {
+    await page.goto(route);
+    // Links are page-relative ("../usage"); the browser resolves them against the page.
+    const links = await page.locator("a[href]").evaluateAll((elements) => elements.map((link) => ({ href: link.getAttribute("href")!, url: (link as HTMLAnchorElement).href })));
+    const origin = new URL(page.url()).origin;
+    for (const { href, url } of links.filter((link) => link.url.startsWith(origin) && !new URL(link.url).pathname.startsWith(`${BASE_PATH}assets/`))) {
+      expect(href, `link on ${route}`).not.toMatch(/\.html(#|$)/);
+      const path = new URL(url).pathname;
+      if (checked.has(path)) continue;
+      const response = await request.get(new URL(url).href);
+      expect(response.status(), `${href} on ${route}`).toBe(200);
+      checked.set(path, (await response.text()).match(/<title>([^<]*)/)![1]!);
+    }
+  }
+  // A missing page is a 404 with the site's 404 page, not another page: a fallback would hide broken links.
+  expect((await request.get("no-such-page")).status()).toBe(404);
+  expect(checked.get(`${BASE_PATH}usage`)).toBe("Using the library · blendfile");
+  expect(checked.get(`${BASE_PATH}spec/05-sdna`)).toBe("05 SDNA: the type catalog · blendfile");
+  expect(new Set(checked.values()).size).toBe(checked.size);
+});
+
 test("navigation links reach every spec page", async ({ page }) => {
-  await page.goto("/spec/");
-  const specLinks = page.getByRole("navigation", { name: "Documentation" }).locator('a[href^="/spec/"]');
-  expect(await specLinks.count()).toBe(ROUTES.filter((route) => route.startsWith("/spec/")).length);
+  await page.goto("spec/");
+  const specLinks = page.getByRole("navigation", { name: "Documentation" }).locator('a[href*="spec/"]');
+  expect(await specLinks.count()).toBe(ROUTES.filter((route) => route.startsWith("spec/")).length);
   await specLinks.filter({ hasText: "04 Block headers" }).click();
   await expect(page.locator("h1")).toHaveText("04 Block headers");
 });
 
 test("mermaid diagrams render to SVG", async ({ page }) => {
-  await page.goto("/spec/01-file-structure.html");
+  await page.goto("spec/01-file-structure.html");
   await expect(page.locator("figure.mermaid-diagram svg").first()).toBeVisible({ timeout: 20_000 });
 });
 
 test("theme toggle switches dark mode and remembers it", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("");
   const toggle = page.getByRole("checkbox", { name: "Dark mode" });
   const wasDark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
   await toggle.click();
@@ -139,7 +165,7 @@ test("inspector: chosen files, including a gzip file, a .blend with its images a
 });
 
 test("overview graphics: file anatomy, pointer hops from the fixture, byte share chart", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("");
   await expect(page.getByRole("figure", { name: "Anatomy of a .blend file" })).toBeVisible();
   const pointerFigure = page.getByRole("figure", { name: "Following pointers through saved addresses" });
   await expect(pointerFigure).toContainText('Mesh "ProbeMesh"');
@@ -148,14 +174,14 @@ test("overview graphics: file anatomy, pointer hops from the fixture, byte share
   await expect(chart.locator(".share-segment")).toHaveCount(8);
   await chart.getByText("Table view").click();
   await expect(chart.locator("table")).toContainText("Type catalog");
-  const icon = await page.request.get("/assets/icon.svg");
+  const icon = await page.request.get("assets/icon.svg");
   expect(icon.status()).toBe(200);
   expect(await icon.text()).toContain("<svg");
 });
 
 test("code examples switch tabs and copy the visible code", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/usage.html");
+  await page.goto("usage.html");
   const openExample = page.getByRole("radiogroup", { name: "Open a file" }).locator("xpath=ancestor::figure");
   await expect(openExample.locator('pre[data-tab="tab-0"]')).toBeVisible();
   await openExample.getByText("Browser: fetch").click();

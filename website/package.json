@@ -6,11 +6,14 @@
   "license": "MIT",
   "author": "Michael Mannseicher <mad.mansi90@gmail.com>",
   "packageManager": "bun@1.3.9",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "cd .. && make dev",
-    "build": "cd .. && make website",
-    "serve": "cd .. && bunx defuss-ssg serve website --port 4173 --skip-setup",
-    "preview": "cd .. && make website && bunx defuss-ssg serve website --port 4173 --skip-setup"
+    "build": "node scripts/check-node.mjs && node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\" && defuss-ssg build .",
+    "dev": "node scripts/check-node.mjs && defuss-ssg dev .",
+    "serve": "vite preview --config preview.config.ts --outDir dist --base /blendfile/ --port 4173",
+    "preview": "bun run build && bun run serve"
   },
   "devDependencies": {
     "oxlint": "1.88.0"

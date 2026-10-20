@@ -25,12 +25,9 @@ jobs:
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
-      - id: pages
-        uses: actions/configure-pages@v5
-      # Project pages live under /<repository>/; website/config.ts prefixes every root-absolute URL with SITE_BASE.
+      - uses: actions/configure-pages@v5
+      # Pages use page-relative URLs (website/config.ts), so the same build works under /blendfile/.
       - run: make website
-        env:
-          SITE_BASE: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: website/dist

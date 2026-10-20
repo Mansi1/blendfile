@@ -2,9 +2,10 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Marked } from "marked";
+import { REPOSITORY_ROOT } from "./site.ts";
 
 // defuss-ssg runs from the repository root (see Makefile), where spec/ lives.
-const SPEC_DIRECTORY = join(process.cwd(), "spec");
+const SPEC_DIRECTORY = join(REPOSITORY_ROOT, "spec");
 
 export interface SpecPageInfo {
   /** File name without `.md`, e.g. `02-file-header`; the README is `index`. */

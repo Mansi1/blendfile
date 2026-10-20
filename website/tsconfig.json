@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
@@ -10,9 +14,23 @@
     "noEmit": true,
     "strict": true,
     "skipLibCheck": true,
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "jsx": "react-jsx",
-    "jsxImportSource": "defuss"
+    "jsxImportSource": "defuss",
+    "paths": {
+      "blendfile": [
+        "../src/index.ts"
+      ],
+      "blendfile-preview": [
+        "../vscode-extension/src/webview/preview-app.tsx"
+      ]
+    }
   },
-  "include": ["components", "lib", "config.ts"]
+  "include": [
+    "components",
+    "lib",
+    "config.ts"
+  ]
 }

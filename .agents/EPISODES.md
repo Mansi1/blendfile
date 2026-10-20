@@ -28,3 +28,8 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-19T23:36:38Z s=989b2bbf DONE fp=5b0759a31855 cov=95.1% paths=Makefile,bun.lock,package.json,skills-lock.json(+1)
 2026-10-19T23:36:38Z s=989b2bbf FINDING website/lib/layout.tsx:Layout, Makefile:website-assets learn=test: The existing Mermaid e2e test fails whenever the diagram bundle is missing.
 2026-10-19T23:36:47Z s=989b2bbf DONE fp=fd3cc41bf7f6 cov=95.1% paths=Makefile,bun.lock,package.json,skills-lock.json(+2)
+2026-10-20T00:02:33Z s=989b2bbf DONE fp=8a60a72f54a5 cov=95.3% paths=.github/workflows/pages.yml,Makefile,e2e/playwright.config.ts,e2e/website.spec.ts(+17)
+2026-10-20T00:02:33Z s=989b2bbf FINDING website/preview.config.ts, e2e/playwright.config.ts learn=test: e2e 'page links have no .html and each one opens its own page' fails on any fallback.
+2026-10-20T00:02:33Z s=989b2bbf FINDING website/config.ts:htmlFix learn=test: Playwright baseURL is /blendfile/, so a root-absolute URL fails to load.
+2026-10-20T00:02:33Z s=989b2bbf FINDING website/config.ts:withoutSourceMap learn=none: Only the dev server logs it; no test reads the dev log.
+2026-10-20T00:02:33Z s=989b2bbf FINDING website/dist/spec/07-special-blocks.html learn=none: Not reproduced; the per-page e2e test fails on an empty page.
