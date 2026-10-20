@@ -5,6 +5,7 @@ import { join, resolve } from "node:path";
 import type { SsgPlugin } from "defuss-ssg";
 import type { Plugin } from "vite";
 import { isPageRoute, pageExists } from "./lib/dev-routes.ts";
+import { highlightCodeBlocks } from "./lib/highlight.ts";
 import { prettyLinks } from "./lib/pretty-links.ts";
 import { SITE, SITE_PATH } from "./lib/site.ts";
 import { UI_COMPONENTS, UI_SCRIPTS } from "./lib/ui.ts";
@@ -63,6 +64,16 @@ const htmlFix: SsgPlugin = {
   },
 };
 
+// Fenced code blocks (MDX pages, spec Markdown) are colored with Shiki while the page is written (lib/highlight.ts).
+// VERIFIED: a dynamic import() does not work here, because defuss-ssg bundles the config into a temporary folder
+// without the split chunk (ERR_MODULE_NOT_FOUND).
+const codeHighlight: SsgPlugin = {
+  name: "code-highlight",
+  phase: "page-html",
+  mode: "both",
+  fn: (html: string) => highlightCodeBlocks(html),
+};
+
 // Page links without .html ("usage.html" → "usage"), as GitHub Pages serves them; Vite preview (preview.config.ts)
 // does the same locally. The rewrite is lib/pretty-links.ts.
 const githubPages: SsgPlugin = {
@@ -119,7 +130,7 @@ export default {
   output: "dist",
   components: "components",
   assets: "assets",
-  plugins: [vendor, htmlFix, githubPages, dropConfig],
+  plugins: [vendor, codeHighlight, htmlFix, githubPages, dropConfig],
   viteConfig: {
     // The library and the VS Code extension's preview live outside website/; components import them by these names,
     // which resolve from the source and the build alike (relative paths would not: defuss-ssg builds from .ssg-temp/).

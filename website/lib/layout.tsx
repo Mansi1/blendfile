@@ -2,6 +2,7 @@
 import type { Props } from "defuss";
 import ThemeToggle from "../components/theme-toggle.js";
 import { listSpecPages } from "./spec.ts";
+import { SITE } from "./site.ts";
 import { UI_SCRIPTS } from "./ui.ts";
 
 export interface LayoutProps extends Props {
@@ -34,6 +35,12 @@ const THEME_BOOTSTRAP = `try{var theme=localStorage.getItem("theme");var dark=th
 const MENU_TOGGLE_ATTRIBUTES: Record<string, string> = { popovertarget: "main-menu" };
 const MENU_POPOVER_ATTRIBUTES: Record<string, string> = { popover: "auto" };
 
+// Link previews (WhatsApp, Slack, X, ...) read Open Graph tags, and only with absolute URLs.
+// The image is rendered by tools/render_social_image.ts.
+const SOCIAL_IMAGE = `${SITE}assets/social-preview.jpg`;
+/** The published address of a page: "/usage.html" → ".../usage", "/spec/index.html" → ".../spec/". */
+const publishedUrl = (route: string) => SITE + route.replace(/^\//, "").replace(/(^|\/)index\.html$/, "$1").replace(/\.html$/, "");
+
 const currentAttribute = (route: string, currentRoute: string) => (route === currentRoute ? "page" : undefined);
 
 export default function Layout({ title, description, currentRoute, children }: LayoutProps) {
@@ -45,6 +52,22 @@ export default function Layout({ title, description, currentRoute, children }: L
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content={description} />
         <title>{`${title} · blendfile`}</title>
+        <link rel="canonical" href={publishedUrl(currentRoute)} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="blendfile" />
+        <meta property="og:title" content={`${title} · blendfile`} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={publishedUrl(currentRoute)} />
+        <meta property="og:image" content={SOCIAL_IMAGE} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="blendfile: read Blender .blend files anywhere, with a 3D view of a scene" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${title} · blendfile`} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={SOCIAL_IMAGE} />
+        <meta name="theme-color" content="#f5792a" />
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
         <link rel="stylesheet" href="/assets/vendor/ui.css" />
         <link rel="stylesheet" href="/assets/vendor/tangerine.css" />

@@ -33,3 +33,7 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-20T00:02:33Z s=989b2bbf FINDING website/config.ts:htmlFix learn=test: Playwright baseURL is /blendfile/, so a root-absolute URL fails to load.
 2026-10-20T00:02:33Z s=989b2bbf FINDING website/config.ts:withoutSourceMap learn=none: Only the dev server logs it; no test reads the dev log.
 2026-10-20T00:02:33Z s=989b2bbf FINDING website/dist/spec/07-special-blocks.html learn=none: Not reproduced; the per-page e2e test fails on an empty page.
+2026-10-20T00:08:10Z s=989b2bbf DONE fp=cfda4de8c0db cov=95.3% paths=README.md,bun.lock,e2e/website.spec.ts,package.json(+8)
+2026-10-20T00:08:10Z s=989b2bbf FINDING website/config.ts:codeHighlight learn=test: e2e 'code blocks are highlighted at build time' fails without highlighting.
+2026-10-20T00:08:10Z s=989b2bbf FINDING website/assets/site.css:.mk-code-block pre learn=none: Visual only; no pixel assertion.
+2026-10-20T00:08:10Z s=989b2bbf FINDING website/lib/layout.tsx:publishedUrl learn=test: e2e checks og tags on every page plus the image's type, size and dimensions.

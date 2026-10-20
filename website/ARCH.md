@@ -29,6 +29,9 @@ flowchart LR
   - `github-pages` removes `.html` from every in-site `<a href>` (`lib/pretty-links.ts`). `make dev` skips page-html plugins, so a Vite `transformIndexHtml` plugin does the same there.
   - `not-found-dev` answers a missing page in `make dev` with the 404 page and status 404, as GitHub Pages does (`lib/dev-routes.ts`, tested in `test/dev-routes.test.ts`).
   - `drop-config` (`post`) deletes `dist/config.js`, which defuss-ssg 0.7.5 writes into the output.
+  - `code-highlight` (`page-html`) colors every fenced code block with Shiki (`lib/highlight.ts`, theme `tokyo-night`) while the page is written, so the browser loads no highlighter. The hydrated code examples get their tokens from `lib/examples.ts` as props instead, because hydration re-renders them.
+- `lib/layout.tsx` writes Open Graph and Twitter tags with absolute URLs (`lib/site.ts`), which link previews in WhatsApp, Slack or X need. The preview image `assets/social-preview.jpg` (1200 × 630, about 95 KB) is rendered from an HTML card by `tools/render_social_image.ts`.
+- The brand colors (Blender orange and blue with pink and violet between them) are tokens and gradients at the end of `site.css`. They are unlayered, so they override the defuss-shadcn component styles, which sit in cascade layers.
 
 ## Why this design
 

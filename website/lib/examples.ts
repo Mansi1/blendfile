@@ -1,11 +1,15 @@
-// Code examples shown on several pages; one copy so they cannot drift apart.
+// Code examples shown on several pages; one copy so they cannot drift apart. Each tab carries its code highlighted
+// at build time (lib/highlight.ts), so the hydrated code-example component only renders colored spans.
+import { highlightLines } from "./highlight.ts";
 
-export const INSTALL_EXAMPLE = [
+const withHighlighting = (lang: string, tabs: { title: string; code: string }[]) => tabs.map((tab) => ({ ...tab, lines: highlightLines(tab.code, lang) }));
+
+export const INSTALL_EXAMPLE = withHighlighting("bash", [
   { title: "bun", code: "bun install && bun run build && bun pm pack\nbun add ./blendfile-0.1.0.tgz" },
   { title: "npm", code: "bun install && bun run build && bun pm pack\nnpm install ./blendfile-0.1.0.tgz" },
-];
+]);
 
-export const OPEN_EXAMPLE = [
+export const OPEN_EXAMPLE = withHighlighting("ts", [
   {
     title: "Node.js",
     code: `import { readFile } from "node:fs/promises";
@@ -32,9 +36,9 @@ input.addEventListener("change", async () => {
 const response = await fetch("/models/scene.blend");
 const blendFile = parseBlendFile(await response.arrayBuffer());`,
   },
-];
+]);
 
-export const NAVIGATE_EXAMPLE = [
+export const NAVIGATE_EXAMPLE = withHighlighting("ts", [
   {
     title: "Objects",
     code: `const cube = blendFile.findDatablock("OB", "Cube");
@@ -56,4 +60,4 @@ const layers = scene?.readListBase("view_layers"); // ListBase → ViewLayer[]`,
 blendFile.readThumbnail();  // { width, height, rgba } or undefined
 blendFile.header;           // pointer size, byte order, version, layout`,
   },
-];
+]);

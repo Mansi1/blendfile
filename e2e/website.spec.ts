@@ -88,6 +88,41 @@ test("page links have no .html and each one opens its own page", async ({ page, 
   expect(new Set(checked.values()).size).toBe(checked.size);
 });
 
+test("every page has a link preview with an absolute image of the right size", async ({ page, request }) => {
+  for (const route of ROUTES.filter((route) => route !== "404.html")) {
+    await page.goto(route);
+    const meta = (property: string) => page.locator(`meta[property="${property}"]`).getAttribute("content");
+    expect(await meta("og:url"), route).toMatch(/^https:\/\/mansi1\.github\.io\/blendfile\//);
+    expect(await meta("og:title"), route).toMatch(/· blendfile$/);
+    expect(await meta("og:image"), route).toBe("https://mansi1.github.io/blendfile/assets/social-preview.jpg");
+    expect(await page.locator('meta[name="twitter:card"]').getAttribute("content")).toBe("summary_large_image");
+  }
+  // The same file the absolute URL names, served from this build: a JPEG of 1200 × 630, small enough for WhatsApp.
+  const image = await request.get("assets/social-preview.jpg");
+  expect(image.status()).toBe(200);
+  const bytes = await image.body();
+  expect(Array.from(bytes.subarray(0, 3))).toEqual([0xff, 0xd8, 0xff]);
+  expect(bytes.length).toBeLessThan(300_000);
+  await page.goto("");
+  const size = await page.evaluate(async () => {
+    const img = new Image();
+    img.src = "assets/social-preview.jpg";
+    await img.decode();
+    return [img.naturalWidth, img.naturalHeight];
+  });
+  expect(size).toEqual([1200, 630]);
+});
+
+test("code blocks are highlighted at build time", async ({ page }) => {
+  await page.goto("usage.html");
+  const block = page.locator("pre.shiki").first();
+  await expect(block).toBeVisible();
+  expect(await block.locator("span[style*='color']").count()).toBeGreaterThan(5);
+  // The hydrated code examples keep their colors after hydration.
+  const example = page.locator(".mk-code-block pre[data-tab='tab-0']").nth(1);
+  expect(await example.locator("span[style*='color']").count()).toBeGreaterThan(5);
+});
+
 test("navigation links reach every spec page", async ({ page }) => {
   await page.goto("spec/");
   const specLinks = page.getByRole("navigation", { name: "Documentation" }).locator('a[href*="spec/"]');

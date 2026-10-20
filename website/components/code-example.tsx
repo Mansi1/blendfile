@@ -1,11 +1,13 @@
 // defuss-shadcn code block with tabs (CSS-only switching, rules for tab-0..tab-5 in site.css) and a copy button.
 import { $, createRef, type Props } from "defuss";
+import type { CodeToken } from "../lib/highlight.ts";
 
 export interface CodeExampleProps extends Props {
   /** Unique per page: names the radio group that switches the tabs. */
   name: string;
   label: string;
-  tabs: { title: string; code: string }[];
+  /** `lines` is the code highlighted at build time; without it the code shows uncolored. */
+  tabs: { title: string; code: string; lines?: CodeToken[][] }[];
 }
 
 export default function CodeExample({ name, label, tabs }: CodeExampleProps) {
@@ -34,7 +36,9 @@ export default function CodeExample({ name, label, tabs }: CodeExampleProps) {
         <button class="mk-code-block-copy" type="button" aria-label="Copy code" onClick={copyVisibleTab}>⧉</button>
       </div>
       {tabs.map((tab, index) => (
-        <pre key={tab.title} data-tab={`tab-${index}`}><code>{tab.code.split("\n").map((line, lineIndex) => <span key={String(lineIndex)}>{line}</span>)}</code></pre>
+        <pre key={tab.title} data-tab={`tab-${index}`}><code>{(tab.lines ?? tab.code.split("\n").map((text): CodeToken[] => [{ text }])).map((line, lineIndex) => (
+          <span key={String(lineIndex)}>{line.map((token, tokenIndex) => <span key={String(tokenIndex)} style={token.color ? `color:${token.color}` : undefined}>{token.text}</span>)}</span>
+        ))}</code></pre>
       ))}
       <span class="mk-code-block-status" role="status" ref={statusRef}></span>
     </figure>
