@@ -1,9 +1,9 @@
-// Client-side .blend inspector: the VS Code extension's preview (3D view and inspector) running in the page through the
+// Client-side .blend playground: the VS Code extension's preview (3D view and inspector) running in the page through the
 // blendfile library; nothing is uploaded. The preview lives in a shadow root so its styles and the site's stay apart.
 import { createRef } from "defuss";
 import { type PreviewApp, createPreviewApp } from "blendfile-preview";
 
-// VERIFIED: relative to the inspector page at the site root, so they also resolve when the site is served under a sub-path.
+// VERIFIED: relative to the playground page at the site root, so they also resolve when the site is served under a sub-path.
 const SAMPLES = [
   { label: "Blender 5.2 scene (zstd)", url: "assets/samples/scene_v52.blend", fileName: "scene_v52.blend" },
   { label: "Blender 4.3 textured plane", url: "assets/samples/texture_v43.blend", fileName: "texture_v43.blend", images: ["assets/samples/textures/texture_base.png", "assets/samples/textures/texture_normal.exr"] },
@@ -14,7 +14,7 @@ const BLEND_FILE_NAME = /\.blend\d*$/i;
 
 const baseName = (path: string) => path.split(/[\\/]/).at(-1)!.toLowerCase();
 
-export default function Inspector() {
+export default function Playground() {
   const hostRef = createRef<HTMLDivElement>();
   const statusRef = createRef<HTMLParagraphElement>();
   let app: PreviewApp | undefined;
@@ -78,23 +78,23 @@ export default function Inspector() {
   }
 
   return (
-    <section class="inspector-app" aria-label="Inspector">
+    <section class="playground-app" aria-label="Playground">
       <div class="file-drop" data-max-files="20">
         <label class="file-drop-zone">
-          <input class="file-drop-input" type="file" name="blend" multiple accept=".blend,.blend1,.png,.jpg,.jpeg,.webp,.bmp,.gif,.exr" id="inspector-file" onChange={loadChosenFiles} />
+          <input class="file-drop-input" type="file" name="blend" multiple accept=".blend,.blend1,.png,.jpg,.jpeg,.webp,.bmp,.gif,.exr" id="playground-file" onChange={loadChosenFiles} />
           <span class="file-drop-icon" aria-hidden="true">⬡</span>
           <span class="file-drop-title">Drop a .blend file here or <span class="file-drop-browse">browse</span></span>
           <span class="file-drop-hint">Add its image files too to see textures. Everything is read in your browser; nothing is uploaded.</span>
         </label>
         <p class="file-drop-error"></p>
       </div>
-      <div class="inspector-samples">
+      <div class="playground-samples">
         {SAMPLES.map((sample) => (
           <button class="btn" type="button" data-variant="outline" key={sample.url} onClick={() => loadSample(sample)}>{sample.label}</button>
         ))}
       </div>
-      <p class="card-description" id="inspector-status" ref={statusRef} aria-live="polite">No file loaded yet.</p>
-      <div class="blend-preview-host" id="inspector-preview" ref={hostRef} hidden onMount={() => mountPreview(hostRef.current)} />
+      <p class="card-description" id="playground-status" ref={statusRef} aria-live="polite">No file loaded yet.</p>
+      <div class="blend-preview-host" id="playground-preview" ref={hostRef} hidden onMount={() => mountPreview(hostRef.current)} />
     </section>
   );
 }

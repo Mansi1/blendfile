@@ -1,12 +1,12 @@
 # blendfile website
 
-Static documentation site for `blendfile`, built with defuss-ssg, defuss JSX and defuss-shadcn. It has five parts:
+Static documentation site for `blendfile`, built with defuss-ssg, defuss JSX and defuss-shadcn. It has three pages:
 
-- an overview of the format and the library
-- the specification, rendered from `../spec/*.md`
-- the library guide and API reference
-- an inspector that runs the VS Code extension's preview (3D view and struct browser) in the browser
-- a page for the VS Code extension, with its `.vsix` for download (`make website` packs it, and the vendor plugin in `config.ts` copies it)
+- `index`: the overview of the format and the library, with the playground, which runs the VS Code extension's preview (3D view and struct browser) in the browser
+- `docs`: the library guide, the API reference, the VS Code extension with its `.vsix` for download, and the specification rendered from `../spec/*.md`
+- `404`
+
+Each `pages/*.mdx` only names its title and description and renders one component from `lib/pages/`; `ARCH.md` explains the layout.
 
 | Command (from this folder) | Does |
 |----------------------------|------|

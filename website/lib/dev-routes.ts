@@ -13,7 +13,7 @@ export function isPageRoute(path: string): boolean {
   return !last.includes(".") || last.endsWith(".html");
 }
 
-/** Whether pages/ holds the page for `path` ("/", "/usage", "/usage.html", "/spec/"), never looking outside it. */
+/** Whether pages/ holds the page for `path` ("/", "/docs", "/docs.html", "/folder/"), never looking outside it. */
 export function pageExists(pagesDir: string, path: string): boolean {
   const route = decodeURIComponent(path).replace(/\.html$/, "");
   const base = normalize(join(pagesDir, route));

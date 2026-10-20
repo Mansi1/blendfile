@@ -5,21 +5,14 @@ import * as blendfile from "../src/index.ts";
 
 const readRepositoryFile = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("every spec page has a website page and vice versa", () => {
-  const specSlugs = readdirSync(new URL("../spec", import.meta.url))
-    .filter((fileName) => fileName.endsWith(".md"))
-    .map((fileName) => (fileName === "README.md" ? "index" : fileName.replace(/\.md$/, "")))
-    .sort();
-  const pageSlugs = readdirSync(new URL("../website/pages/spec", import.meta.url))
-    .filter((fileName) => fileName.endsWith(".mdx"))
-    .map((fileName) => fileName.replace(/\.mdx$/, ""))
-    .sort();
-  expect(pageSlugs).toEqual(specSlugs);
-  for (const slug of pageSlugs) expect(readRepositoryFile(`website/pages/spec/${slug}.mdx`)).toContain(`<SpecPage slug="${slug}" />`);
+test("every spec file starts with the title its chapter on the Docs page shows", () => {
+  const specFiles = readdirSync(new URL("../spec", import.meta.url)).filter((fileName) => fileName.endsWith(".md"));
+  expect(specFiles.length).toBeGreaterThan(5);
+  for (const fileName of specFiles) expect(readRepositoryFile(`spec/${fileName}`), fileName).toMatch(/^# \S/);
 });
 
-test("the usage page's API reference names every runtime export", () => {
-  const usagePage = readRepositoryFile("website/pages/usage.mdx");
+test("the Docs page's API reference names every runtime export", () => {
+  const usagePage = readRepositoryFile("website/lib/docs/api-reference.tsx");
   const undocumented = Object.keys(blendfile).filter((exportName) => !usagePage.includes(`\`${exportName}`) && !usagePage.includes(`${exportName}\``) && !usagePage.includes(`${exportName}(`));
   expect(undocumented).toEqual([]);
 });

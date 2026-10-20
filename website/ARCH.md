@@ -2,41 +2,42 @@
 
 ## What it does
 
-The website documents the `.blend` format and the `blendfile` library, and offers an inspector that runs the VS Code extension's preview of `.blend` files in the browser. It is a static site built with defuss-ssg (Vite 8 underneath), defuss JSX and defuss-shadcn components.
+The website documents the `.blend` format and the `blendfile` library, and runs the VS Code extension's preview of `.blend` files in the browser as a playground. It is a static site built with defuss-ssg (Vite 8 underneath), defuss JSX and defuss-shadcn components, and has three pages: the overview with the playground (`index`), the Docs (`docs`) and `404`.
 
 ## Structure
 
 ```mermaid
 flowchart LR
-  spec["spec/*.md<br/>(repository root)"] --> specLib["lib/spec.ts<br/>marked, build time"]
-  specLib --> pages["pages/spec/*.mdx"]
-  layout["lib/layout.tsx<br/>head, navbar, docs nav"] --> pages
-  layout --> mdx["pages/index.mdx, usage.mdx, inspector.mdx"]
-  components["components/*.tsx<br/>inspector, theme toggle"] --> mdx
-  library["src/ (blendfile)"] --> components
-  preview["vscode-extension preview-app.tsx"] --> components
-  pages --> dist["dist/*.html"]
-  mdx --> dist
+  mdx["pages/*.mdx<br/>front matter + one component"] --> pageComponents["lib/pages/*.tsx<br/>home, docs, not-found"]
+  pageComponents --> shell["lib/layout/<br/>page shell, head, navbar, docs navigation"]
+  pageComponents --> sections["lib/home/, lib/docs/, lib/vscode/<br/>sections"]
+  sections --> parts["lib/parts/<br/>code block, tables, steps"]
+  spec["spec/*.md"] --> specLib["lib/spec.ts<br/>marked, build time"] --> sections
+  islands["components/*.tsx<br/>playground, code examples, theme toggle"] --> sections
+  library["src/ (blendfile)"] --> islands
+  preview["vscode-extension preview-app.tsx"] --> islands
+  pageComponents --> dist["dist/index.html, docs.html, 404.html"]
 ```
 
-- `lib/` runs only at build time; defuss-ssg does not hydrate it. `components/` is rendered at build time and hydrated in the browser.
-- `spec/` is the single source of the format documentation. Each `pages/spec/<slug>.mdx` contains one `<SpecPage slug>` element, and `lib/spec.ts` renders the Markdown with marked. It rewrites links between spec files to site routes and turns Mermaid fences into the defuss-shadcn Mermaid figure. `test/website-contract.test.ts` keeps the page list equal to `spec/*.md`.
-- `components/inspector.tsx` is the VS Code extension's preview: it imports `createPreviewApp` from `blendfile-preview`, an alias for `vscode-extension/src/webview/preview-app.tsx`, which imports the library from `src/index.ts`. The preview renders into a shadow root with its own stylesheet (`vscode-extension/media/preview.css`, copied to `assets/vendor/blend-preview.css` by the vendor plugin). The extension's CSS styles plain elements (`body`, `h1`, `table`) and class names that defuss-shadcn also uses (`.badge`, `.button`), so without the shadow root the two stylesheets would restyle each other. `site.css` maps the site theme onto the `--vscode-*` variables the preview reads, on the host element; custom properties inherit into the shadow root. Image files chosen with the .blend file answer the preview's texture requests by file name, and the textured sample fetches its images next to the sample.
+- Each page in `pages/` holds only front matter (`title`, `description`) and renders one component from `lib/pages/` with them, as the audio-tag website does. The page components compose sections from `lib/home/`, `lib/docs/` and `lib/vscode/`, which use small parts from `lib/parts/`. Everything in `lib/` runs only at build time; defuss-ssg hydrates only `components/` (the playground, the code examples and the theme toggle).
+- The Docs page holds the library guide, the API reference, the VS Code extension and the whole specification. `spec/` stays the single source of the format documentation: `lib/spec.ts` renders each `spec/*.md` as a chapter with marked, moves its headings one level down, points links between spec files at the chapters (`/docs#05-sdna`) and turns Mermaid fences into the defuss-shadcn Mermaid figure. The side navigation (`lib/layout/docs-navigation.tsx`) links to every section and chapter; an e2e test checks that each link lands on a heading.
+- `components/playground.tsx` is the VS Code extension's preview, the `#playground` section of the overview: it imports `createPreviewApp` from `blendfile-preview`, an alias for `vscode-extension/src/webview/preview-app.tsx`, which imports the library from `src/index.ts`. The preview renders into a shadow root with its own stylesheet (`vscode-extension/media/preview.css`, copied to `assets/vendor/blend-preview.css` by the vendor plugin). The extension's CSS styles plain elements (`body`, `h1`, `table`) and class names that defuss-shadcn also uses (`.badge`, `.button`), so without the shadow root the two stylesheets would restyle each other. `site.css` maps the site theme onto the `--vscode-*` variables the preview reads, on the host element; custom properties inherit into the shadow root. Image files chosen with the .blend file answer the preview's texture requests by file name, and the textured sample fetches its images next to the sample.
 - The `website/package.json` scripts run defuss-ssg in `website/` (`bun run build`, `bun run dev`; the Makefile calls them). defuss-ssg builds from a copy in `.ssg-temp/`, so relative imports out of `website/` would break. Code outside the folder is imported by name instead: `viteConfig.resolve.alias` in `config.ts` maps `blendfile` to `src/index.ts` and `blendfile-preview` to the extension's preview, and `tsconfig.json` has the same `paths`. Build-time code reads `input/` and `spec/` through `REPOSITORY_ROOT` in `lib/site.ts`.
 - `config.ts` follows the audio-tag website's config:
   - `vendor` (`pre`) writes `assets/vendor/ui.css` (defuss-shadcn's core CSS plus each component in `lib/ui.ts`), `core.min.js` and one script per component that has one, and copies the theme, the preview stylesheet, three sample files with the textured sample's images, and the packed `.vsix` (all gitignored). Loading only the 13 components the pages use replaces `all.min.css` and `all.min.js` (1.3 MB) with about 165 KB. The source map comments are removed, because the maps are not copied and the dev server logged an error for each one.
-  - `html-fix` (`page-html`) prepends the doctype, which defuss-ssg 0.7.5 does not write, and makes URLs page-relative. Pages write root-absolute URLs, and the plugin rewrites them per page depth (`/usage` becomes `./usage` on the overview and `../usage` on spec pages), so one build works at any base path. `data-hydrate-src` and `data-hydrate-runtime` become `./X`, because the hydration runtime resolves them from `components/`. The `?v=Date.now()` cache-bust in the hydration scripts is removed. `404.html` keeps absolute `/blendfile/` URLs, because GitHub Pages serves it at any depth.
+  - `html-fix` (`page-html`) prepends the doctype, which defuss-ssg 0.7.5 does not write, and makes URLs page-relative. Pages write root-absolute URLs, and the plugin rewrites them per page depth (`/docs` becomes `./docs` on a page at the root and `../docs` one folder down), so one build works at any base path. `data-hydrate-src` and `data-hydrate-runtime` become `./X`, because the hydration runtime resolves them from `components/`. The `?v=Date.now()` cache-bust in the hydration scripts is removed. `404.html` keeps absolute `/blendfile/` URLs, because GitHub Pages serves it at any depth.
   - `github-pages` removes `.html` from every in-site `<a href>` (`lib/pretty-links.ts`). `make dev` skips page-html plugins, so a Vite `transformIndexHtml` plugin does the same there.
   - `not-found-dev` answers a missing page in `make dev` with the 404 page and status 404, as GitHub Pages does (`lib/dev-routes.ts`, tested in `test/dev-routes.test.ts`).
   - `drop-config` (`post`) deletes `dist/config.js`, which defuss-ssg 0.7.5 writes into the output.
   - `code-highlight` (`page-html`) colors every fenced code block with Shiki (`lib/highlight.ts`, theme `tokyo-night`) while the page is written, so the browser loads no highlighter. The hydrated code examples get their tokens from `lib/examples.ts` as props instead, because hydration re-renders them.
-- `lib/layout.tsx` writes Open Graph and Twitter tags with absolute URLs (`lib/site.ts`), which link previews in WhatsApp, Slack or X need. The preview image `assets/social-preview.jpg` (1200 × 630, about 95 KB) is rendered from an HTML card by `tools/render_social_image.ts`.
+- `lib/layout/head.tsx` writes Open Graph and Twitter tags with absolute URLs (`lib/site.ts`), which link previews in WhatsApp, Slack or X need. The preview image `assets/social-preview.jpg` (1200 × 630, about 95 KB) is rendered from an HTML card by `tools/render_social_image.ts`.
 - The brand colors (Blender orange and blue with pink and violet between them) are tokens and gradients at the end of `site.css`. They are unlayered, so they override the defuss-shadcn component styles, which sit in cascade layers.
 
 ## Why this design
 
-- Rendering `spec/*.md` at build time, rather than copying the text into MDX, keeps one source of truth. MDX would also choke on the braces and angle brackets in byte-layout tables.
-- The inspector reuses the extension's preview instead of a second implementation, so the 3D view, textures and struct browser behave the same in VS Code and on the site, and one set of e2e tests covers both. The preview holds its state in a closure per mounted root and re-renders parts with `$(ref).update(...)`, the defuss pattern for explicit updates.
+- Rendering `spec/*.md` at build time, rather than copying the text into the page, keeps one source of truth. One Docs page instead of a page per chapter makes the whole reference searchable with the browser's find, as on the audio-tag website.
+- Pages as typed components instead of MDX prose keep the markup in one language and let sections share parts (the code block, the reference table); MDX would also choke on the braces and angle brackets in byte-layout tables.
+- The playground reuses the extension's preview instead of a second implementation, so the 3D view, textures and struct browser behave the same in VS Code and on the site, and one set of e2e tests covers both. The preview holds its state in a closure per mounted root and re-renders parts with `$(ref).update(...)`, the defuss pattern for explicit updates.
 
 ## Operations
 
@@ -48,4 +49,4 @@ Mermaid diagrams load Mermaid 12.0.0 from jsDelivr at view time; this is the def
 
 ## Security and privacy
 
-Files opened in the inspector stay in the browser: the .blend file and any image files chosen with it are read with `File.arrayBuffer()` and parsed locally, and the page makes no request with their content. Mermaid is the only third-party script, rendered with `securityLevel: "strict"` by the component.
+Files opened in the playground stay in the browser: the .blend file and any image files chosen with it are read with `File.arrayBuffer()` and parsed locally, and the page makes no request with their content. Mermaid is the only third-party script, rendered with `securityLevel: "strict"` by the component.

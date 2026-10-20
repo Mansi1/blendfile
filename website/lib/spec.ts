@@ -1,30 +1,34 @@
-// Build-time only: reads spec/*.md (the single source of the format docs) and renders it to HTML.
+// Build-time only: reads spec/*.md (the single source of the format docs) and renders each file as a chapter of the
+// Docs page (lib/docs/specification.tsx).
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Marked } from "marked";
 import { REPOSITORY_ROOT } from "./site.ts";
 
-// defuss-ssg runs from the repository root (see Makefile), where spec/ lives.
 const SPEC_DIRECTORY = join(REPOSITORY_ROOT, "spec");
 
-export interface SpecPageInfo {
+export interface SpecChapterInfo {
   /** File name without `.md`, e.g. `02-file-header`; the README is `index`. */
   slug: string;
   title: string;
+  /** Id of the chapter's section on the Docs page: the slug, `specification` for the README. */
+  id: string;
+  /** Link to the chapter, e.g. `/docs.html#02-file-header`. */
   route: string;
 }
 
 const slugOfFile = (fileName: string) => (fileName === "README.md" ? "index" : fileName.replace(/\.md$/, ""));
-const routeOfSlug = (slug: string) => `/spec/${slug}.html`;
+const idOfSlug = (slug: string) => (slug === "index" ? "specification" : slug);
+const routeOfSlug = (slug: string) => `/docs.html#${idOfSlug(slug)}`;
 
-export function listSpecPages(): SpecPageInfo[] {
+export function listSpecChapters(): SpecChapterInfo[] {
   return readdirSync(SPEC_DIRECTORY)
     .filter((fileName) => fileName.endsWith(".md"))
     .sort((left, right) => (left === "README.md" ? -1 : right === "README.md" ? 1 : left.localeCompare(right)))
     .map((fileName) => {
       const firstHeading = /^# (.+)$/m.exec(readFileSync(join(SPEC_DIRECTORY, fileName), "utf8"));
       const slug = slugOfFile(fileName);
-      return { slug, title: firstHeading?.[1] ?? slug, route: routeOfSlug(slug) };
+      return { slug, title: firstHeading?.[1] ?? slug, id: idOfSlug(slug), route: routeOfSlug(slug) };
     });
 }
 
@@ -39,17 +43,21 @@ const specMarkdown = new Marked({
     },
   },
   walkTokens(token) {
-    // Links between spec pages point at their website routes.
+    // Links between spec files point at their chapters on the Docs page (an anchor inside a file, at the chapter).
     if (token.type === "link") {
-      token.href = token.href.replace(/^(?:\.\/)?README\.md/, routeOfSlug("index")).replace(/^(?:\.\/)?([\w-]+)\.md/, (_match: string, slug: string) => routeOfSlug(slug));
+      token.href = token.href.replace(/^(?:\.\/)?README\.md(?:#[\w-]*)?/, routeOfSlug("index")).replace(/^(?:\.\/)?([\w-]+)\.md(?:#[\w-]*)?/, (_match: string, slug: string) => routeOfSlug(slug));
     }
   },
 });
 
-/** The spec page as HTML without its first heading (the layout shows the title), plus the title. */
-export function renderSpecPage(slug: string): { title: string; html: string } {
+/**
+ * A spec file as HTML without its first heading (the chapter shows the title), plus the title. VERIFIED: headings move
+ * one level down (## becomes <h3>), because each chapter sits under an <h2> on the Docs page.
+ */
+export function renderSpecChapter(slug: string): { title: string; html: string } {
   const fileName = slug === "index" ? "README.md" : `${slug}.md`;
   const markdown = readFileSync(join(SPEC_DIRECTORY, fileName), "utf8");
   const title = /^# (.+)$/m.exec(markdown)?.[1] ?? slug;
-  return { title, html: specMarkdown.parse(markdown.replace(/^# .+\n/, "")) as string };
+  const html = specMarkdown.parse(markdown.replace(/^# .+\n/, "")) as string;
+  return { title, html: html.replace(/<(\/?)h([2-5])\b/g, (_match, slash: string, level: string) => `<${slash}h${Number(level) + 1}`) };
 }

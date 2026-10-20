@@ -37,3 +37,9 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-20T00:08:10Z s=989b2bbf FINDING website/config.ts:codeHighlight learn=test: e2e 'code blocks are highlighted at build time' fails without highlighting.
 2026-10-20T00:08:10Z s=989b2bbf FINDING website/assets/site.css:.mk-code-block pre learn=none: Visual only; no pixel assertion.
 2026-10-20T00:08:10Z s=989b2bbf FINDING website/lib/layout.tsx:publishedUrl learn=test: e2e checks og tags on every page plus the image's type, size and dimensions.
+2026-10-20T00:24:15Z s=989b2bbf FAIL tests.unit,coverage
+2026-10-20T00:26:23Z s=989b2bbf DONE fp=814ee3db6d87 cov=95.3% paths=ARCH.md,README.md,e2e/website.spec.ts,test/dev-routes.test.ts(+65)
+2026-10-20T00:26:23Z s=989b2bbf FINDING e2e/website.spec.ts:side navigation test learn=test: The navigation test fails on any anchor without a matching id.
+2026-10-20T00:26:23Z s=989b2bbf FINDING website/assets/site.css:[id] scroll-margin-top learn=test: The navigation test asserts the clicked chapter heading is in the viewport.
+2026-10-20T00:26:23Z s=989b2bbf FINDING website/lib/parts/reference-table.tsx, site.css learn=none: Visual; no pixel assertion.
+2026-10-20T00:26:23Z s=989b2bbf FINDING website/.ssg-temp learn=none: Only after an interrupted build; defuss-ssg reuses the stale copy.

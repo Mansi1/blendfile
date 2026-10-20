@@ -28,6 +28,11 @@ const decodeEntities = (html: string) =>
 // <pre ...><code class="language-x">...</code></pre> as MDX and marked write fenced code blocks.
 const CODE_BLOCK = /<pre\b[^>]*>\s*<code class="language-([\w-]+)">([\s\S]*?)<\/code>\s*<\/pre>/g;
 
+/** One code block as Shiki's highlighted markup (a <pre class="shiki">), for the CodeBlock part. */
+export function highlightToHtml(code: string, lang: string): string {
+  return highlighter.codeToHtml(code, { lang: knownLanguage(lang), theme: CODE_THEME });
+}
+
 /** Replaces every fenced code block in a page with Shiki's highlighted markup. */
 export function highlightCodeBlocks(html: string): string {
   return html.replace(CODE_BLOCK, (_, lang: string, code: string) =>

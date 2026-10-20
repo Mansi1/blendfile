@@ -8,9 +8,9 @@ Read Blender `.blend` files in browsers and Node.js. The library handles:
 - struct decoding through the SDNA type catalog stored in each file
 - scenes for 3D viewers: visible objects with Blender's world matrices, mesh faces as triangles, materials, lights and cameras
 
-The repository also contains a written specification of the format (`spec/`), a documentation website with an in-browser inspector (`website/`) and a VS Code extension that previews `.blend` files (`vscode-extension/`).
+The repository also contains a written specification of the format (`spec/`), a documentation website with an in-browser playground (`website/`) and a VS Code extension that previews `.blend` files (`vscode-extension/`).
 
-Website: https://mansi1.github.io/blendfile/. The extension's `.vsix` can be downloaded from https://mansi1.github.io/blendfile/vscode.html.
+Website: https://mansi1.github.io/blendfile/. The extension's `.vsix` can be downloaded from https://mansi1.github.io/blendfile/docs#vscode-extension.
 
 ## Install
 
@@ -75,7 +75,7 @@ Every failure throws `BlendError` with `code` `NOT_BLEND`, `UNSUPPORTED` or `COR
 | `tools/make_fixtures.py` | regenerates the fixtures: `Blender -b --factory-startup --python tools/make_fixtures.py -- input v43` |
 | `tools/render_social_image.ts` | renders the website's link preview image: `bun tools/render_social_image.ts` |
 | `tools/make_scene_fixture.py` | regenerates the scene fixtures for the 3D view: `… --python tools/make_scene_fixture.py -- input scene_v43` |
-| `website/` | defuss-ssg site: overview, specification, library docs, inspector, VS Code extension page |
+| `website/` | defuss-ssg site: overview, specification, docs, playground, VS Code extension page |
 | `vscode-extension/` | VS Code custom editor for `.blend` and `.blend1` files: a 3D view of the scene and an inspector; see its README |
 | `e2e/` | packed-library consumer test, Playwright tests of the website and the extension's webview |
 

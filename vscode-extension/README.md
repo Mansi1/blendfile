@@ -29,7 +29,7 @@ Open a `.blend` file: the preview is the default editor for `*.blend` and `*.ble
 
 ## Install from this repository
 
-The packed `.vsix` is also on the website: https://mansi1.github.io/blendfile/vscode.html.
+The packed `.vsix` is also on the website: https://mansi1.github.io/blendfile/docs#vscode-extension.
 
 ```sh
 make vscode-package        # builds vscode-extension/blendfile-preview.vsix

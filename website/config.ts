@@ -22,7 +22,7 @@ const withoutSourceMap = (code: string) => code.replace(/\n?\/[/*][#@] sourceMap
 
 // VERIFIED: copies what the site needs from outside website/ into assets/ before the build copies assets, so the site
 // works offline (no CDN for the UI): one ui.css (core first, then each component) and one script per module, since the
-// component scripts are separate modules that must not be concatenated. Also the inspector's samples and the VS Code
+// component scripts are separate modules that must not be concatenated. Also the playground's samples and the VS Code
 // extension's preview stylesheet, and the packed extension for the download link.
 const vendor: SsgPlugin = {
   name: "vendor",
@@ -46,8 +46,8 @@ const vendor: SsgPlugin = {
 
 // VERIFIED: defuss-ssg 0.7.5 writes no doctype (quirks mode), and absolute /components/ URLs with a ?v=Date.now()
 // cache-bust into its hydration scripts. Page-relative URLs make one build work at / (make start, e2e) and under
-// /blendfile/ (GitHub Pages): pages write root-absolute URLs, and this rewrites them per page depth ("/usage" on
-// spec/05-sdna.html becomes "../usage"). The hydration runtime resolves data-hydrate-src|runtime from components/
+// /blendfile/ (GitHub Pages): pages write root-absolute URLs, and this rewrites them per page depth ("/docs" on
+// a page in a folder becomes "../docs"). The hydration runtime resolves data-hydrate-src|runtime from components/
 // itself, so those become "./X". 404.html is served by GitHub Pages at any depth, so its URLs are absolute.
 const htmlFix: SsgPlugin = {
   name: "html-fix",
@@ -74,7 +74,7 @@ const codeHighlight: SsgPlugin = {
   fn: (html: string) => highlightCodeBlocks(html),
 };
 
-// Page links without .html ("usage.html" → "usage"), as GitHub Pages serves them; Vite preview (preview.config.ts)
+// Page links without .html ("docs.html" → "docs"), as GitHub Pages serves them; Vite preview (preview.config.ts)
 // does the same locally. The rewrite is lib/pretty-links.ts.
 const githubPages: SsgPlugin = {
   name: "github-pages",
@@ -83,7 +83,7 @@ const githubPages: SsgPlugin = {
   fn: (html: string) => prettyLinks(html),
 };
 // The audio-tag website found that `dev` renders pages without running the page-html plugins but passes the HTML
-// through Vite's transformIndexHtml, so this Vite plugin rewrites the links there (the dev server serves /usage too).
+// through Vite's transformIndexHtml, so this Vite plugin rewrites the links there (the dev server serves /docs too).
 const githubPagesDev: Plugin = { name: "github-pages-dev", transformIndexHtml: (html: string) => prettyLinks(html) };
 
 // The dev server answers a missing page with the site's 404 page and status 404, as GitHub Pages does. Only page

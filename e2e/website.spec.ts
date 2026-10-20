@@ -1,4 +1,5 @@
-// Every page of the built website in a real browser, plus the inspector flows end to end.
+// Every page of the built website in a real browser (index with the playground, docs, 404), plus the playground flows
+// end to end.
 import { expect, type Page, test } from "@playwright/test";
 import { readdirSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
@@ -26,14 +27,14 @@ const ROUTES = listHtmlRoutes(distDirectory);
 /** The path GitHub Pages serves the site under; playwright.config.ts serves the build there too. */
 const BASE_PATH = "/blendfile/";
 
-/** Opens the inspector page and waits for hydration: the preview's shadow root exists once the handlers are attached. */
-async function openInspector(page: Page) {
-  await page.goto("inspector.html");
-  await page.waitForFunction(() => document.querySelector("#inspector-preview")?.shadowRoot);
+/** Opens the overview and waits for the playground to hydrate: the preview's shadow root exists once the handlers are attached. */
+async function openPlayground(page: Page) {
+  await page.goto("");
+  await page.waitForFunction(() => document.querySelector("#playground-preview")?.shadowRoot);
 }
 
 test("the build contains the expected pages", () => {
-  expect(ROUTES).toEqual(expect.arrayContaining(["", "usage.html", "inspector.html", "vscode.html", "spec/", "spec/05-sdna.html", "404.html"]));
+  expect([...ROUTES].sort()).toEqual(["", "404.html", "docs.html"]);
 });
 
 for (const route of ROUTES) {
@@ -52,8 +53,8 @@ for (const route of ROUTES) {
   });
 }
 
-test("the VS Code page offers the packed extension for download", async ({ page, request }) => {
-  await page.goto("vscode.html");
+test("the Docs page offers the packed VS Code extension for download", async ({ page, request }) => {
+  await page.goto("docs.html");
   const download = page.getByRole("link", { name: /Download blendfile-preview\.vsix/ });
   const response = await request.get(await download.evaluate((link: HTMLAnchorElement) => link.href));
   expect(response.status()).toBe(200);
@@ -61,7 +62,8 @@ test("the VS Code page offers the packed extension for download", async ({ page,
   expect(Array.from((await response.body()).subarray(0, 4))).toEqual([0x50, 0x4b, 0x03, 0x04]);
   for (const image of await page.locator("figure.screenshot img").all()) {
     await image.scrollIntoViewIfNeeded();
-    expect(await image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(true);
+    // Lazy images load once scrolled into view.
+    await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(true);
   }
 });
 
@@ -69,7 +71,7 @@ test("page links have no .html and each one opens its own page", async ({ page, 
   const checked = new Map<string, string>();
   for (const route of ROUTES) {
     await page.goto(route);
-    // Links are page-relative ("../usage"); the browser resolves them against the page.
+    // Links are page-relative ("./docs"); the browser resolves them against the page.
     const links = await page.locator("a[href]").evaluateAll((elements) => elements.map((link) => ({ href: link.getAttribute("href")!, url: (link as HTMLAnchorElement).href })));
     const origin = new URL(page.url()).origin;
     for (const { href, url } of links.filter((link) => link.url.startsWith(origin) && !new URL(link.url).pathname.startsWith(`${BASE_PATH}assets/`))) {
@@ -83,8 +85,7 @@ test("page links have no .html and each one opens its own page", async ({ page, 
   }
   // A missing page is a 404 with the site's 404 page, not another page: a fallback would hide broken links.
   expect((await request.get("no-such-page")).status()).toBe(404);
-  expect(checked.get(`${BASE_PATH}usage`)).toBe("Using the library · blendfile");
-  expect(checked.get(`${BASE_PATH}spec/05-sdna`)).toBe("05 SDNA: the type catalog · blendfile");
+  expect(checked.get(`${BASE_PATH}docs`)).toBe("Docs · blendfile");
   expect(new Set(checked.values()).size).toBe(checked.size);
 });
 
@@ -114,7 +115,7 @@ test("every page has a link preview with an absolute image of the right size", a
 });
 
 test("code blocks are highlighted at build time", async ({ page }) => {
-  await page.goto("usage.html");
+  await page.goto("docs.html");
   const block = page.locator("pre.shiki").first();
   await expect(block).toBeVisible();
   expect(await block.locator("span[style*='color']").count()).toBeGreaterThan(5);
@@ -123,16 +124,21 @@ test("code blocks are highlighted at build time", async ({ page }) => {
   expect(await example.locator("span[style*='color']").count()).toBeGreaterThan(5);
 });
 
-test("navigation links reach every spec page", async ({ page }) => {
-  await page.goto("spec/");
-  const specLinks = page.getByRole("navigation", { name: "Documentation" }).locator('a[href*="spec/"]');
-  expect(await specLinks.count()).toBe(ROUTES.filter((route) => route.startsWith("spec/")).length);
-  await specLinks.filter({ hasText: "04 Block headers" }).click();
-  await expect(page.locator("h1")).toHaveText("04 Block headers");
+test("the side navigation reaches every Docs section and every spec chapter", async ({ page }) => {
+  await page.goto("docs.html");
+  const navigation = page.getByRole("navigation", { name: "Documentation" });
+  const anchors = await navigation.locator('a[href*="docs#"]').evaluateAll((links) => links.map((link) => new URL((link as HTMLAnchorElement).href).hash.slice(1)));
+  const specFiles = readdirSync(join(repositoryRoot, "spec")).filter((fileName) => fileName.endsWith(".md"));
+  expect(anchors.filter((id) => id === "specification" || /^\d\d-/.test(id)).length).toBe(specFiles.length);
+  // Every link lands on a heading of the Docs page.
+  for (const id of anchors) expect(await page.locator(`[id="${id}"]`).count(), id).toBe(1);
+  await navigation.getByRole("link", { name: "04 Block headers" }).click();
+  await expect(page).toHaveURL(/#04-block-headers$/);
+  await expect(page.locator('[id="04-block-headers"]')).toBeInViewport();
 });
 
 test("mermaid diagrams render to SVG", async ({ page }) => {
-  await page.goto("spec/01-file-structure.html");
+  await page.goto("docs.html#01-file-structure");
   await expect(page.locator("figure.mermaid-diagram svg").first()).toBeVisible({ timeout: 20_000 });
 });
 
@@ -146,13 +152,13 @@ test("theme toggle switches dark mode and remembers it", async ({ page }) => {
   expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(!wasDark);
 });
 
-test("inspector: the extension's preview shows a sample scene, then a datablock and a pointer to its mesh", async ({ page }) => {
+test("playground: the extension's preview shows a sample scene, then a datablock and a pointer to its mesh", async ({ page }) => {
   const errors = collectPageErrors(page);
-  await openInspector(page);
+  await openPlayground(page);
   await page.getByRole("button", { name: "Blender 5.2 scene (zstd)" }).click();
-  await expect(page.locator("#inspector-status")).toContainText("Blender 5.2");
+  await expect(page.locator("#playground-status")).toContainText("Blender 5.2");
   // The preview sits in a shadow root; Playwright locators reach into it.
-  const preview = page.locator("#inspector-preview");
+  const preview = page.locator("#playground-preview");
   await expect(preview.getByRole("heading", { name: "scene_v52.blend" })).toBeVisible();
   await expect(preview.locator(".viewport-canvas")).toBeVisible();
   await expect(preview.getByRole("button", { name: "Box", exact: true })).toBeVisible();
@@ -167,36 +173,36 @@ test("inspector: the extension's preview shows a sample scene, then a datablock 
   await expect(preview.locator("#struct-title")).toHaveText("Mesh");
   await preview.getByRole("navigation", { name: "Opened structs" }).getByRole("button", { name: "Box" }).click();
   await expect(preview.locator("#struct-title")).toHaveText("Object");
-  await page.screenshot({ path: join(screenshotDirectory, "inspector-loaded.png"), fullPage: true });
+  await page.screenshot({ path: join(screenshotDirectory, "playground-loaded.png"), fullPage: true });
   expect(errors).toEqual([]);
 });
 
-test("inspector: the textured sample loads its image files and shows textures", async ({ page }) => {
+test("playground: the textured sample loads its image files and shows textures", async ({ page }) => {
   const errors = collectPageErrors(page);
-  await openInspector(page);
+  await openPlayground(page);
   await page.getByRole("button", { name: "Blender 4.3 textured plane" }).click();
-  const preview = page.locator("#inspector-preview");
+  const preview = page.locator("#playground-preview");
   await preview.getByRole("button", { name: "Material" }).click();
   await expect(preview.locator("#viewer-textures")).toHaveText("Textures 3/3", { timeout: 20_000 });
   expect(errors).toEqual([]);
 });
 
-test("inspector: chosen files, including a gzip file, a .blend with its images and a non-blend file", async ({ page }) => {
-  await openInspector(page);
-  const preview = page.locator("#inspector-preview");
-  await page.locator("#inspector-file").setInputFiles(join(repositoryRoot, "input/v43_gzip.blend"));
+test("playground: chosen files, including a gzip file, a .blend with its images and a non-blend file", async ({ page }) => {
+  await openPlayground(page);
+  const preview = page.locator("#playground-preview");
+  await page.locator("#playground-file").setInputFiles(join(repositoryRoot, "input/v43_gzip.blend"));
   await preview.getByRole("tab", { name: "Inspector" }).click();
   await expect(preview.locator(".facts")).toContainText("gzip");
   await expect(preview.locator(".facts")).toContainText("SmallBHead8");
   // Image files chosen with the .blend file are found by name; the roughness image is packed in the file.
-  await page.locator("#inspector-file").setInputFiles(["input/texture_v43.blend", "input/textures/texture_base.png"].map((path) => join(repositoryRoot, path)));
+  await page.locator("#playground-file").setInputFiles(["input/texture_v43.blend", "input/textures/texture_base.png"].map((path) => join(repositoryRoot, path)));
   await preview.getByRole("tab", { name: "3D View" }).click();
   await preview.getByRole("button", { name: "Material" }).click();
   await expect(preview.locator("#viewer-textures")).toContainText("Textures 2/3 · 1 missing: NormalImage", { timeout: 20_000 });
   // A .blend name passes the picker's accept filter, so the library itself rejects the content.
-  await page.locator("#inspector-file").setInputFiles({ name: "notes.blend", mimeType: "application/octet-stream", buffer: Buffer.from("hello, not a blend file") });
+  await page.locator("#playground-file").setInputFiles({ name: "notes.blend", mimeType: "application/octet-stream", buffer: Buffer.from("hello, not a blend file") });
   await expect(preview.getByRole("alert")).toContainText("NOT_BLEND");
-  await expect(page.locator("#inspector-status")).toContainText("NOT_BLEND");
+  await expect(page.locator("#playground-status")).toContainText("NOT_BLEND");
 });
 
 test("overview graphics: file anatomy, pointer hops from the fixture, byte share chart", async ({ page }) => {
@@ -216,7 +222,7 @@ test("overview graphics: file anatomy, pointer hops from the fixture, byte share
 
 test("code examples switch tabs and copy the visible code", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("usage.html");
+  await page.goto("docs.html");
   const openExample = page.getByRole("radiogroup", { name: "Open a file" }).locator("xpath=ancestor::figure");
   await expect(openExample.locator('pre[data-tab="tab-0"]')).toBeVisible();
   await openExample.getByText("Browser: fetch").click();
