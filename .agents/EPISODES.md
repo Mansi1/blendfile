@@ -49,3 +49,4 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-21T14:06:27Z s=989b2bbf FAIL tests.e2e.1
 2026-10-21T14:09:47Z s=989b2bbf DONE fp=8fb8bebd1478 cov=95.3% paths=.github/workflows/publish.yml,ARCH.md,README.md,package.json
 2026-10-21T14:11:25Z s=989b2bbf DONE fp=355472ec8341 cov=95.3% paths=.github/workflows/publish.yml,ARCH.md,README.md,package.json
+2026-10-21T14:19:28Z s=989b2bbf DONE fp=8618fe5362ec cov=95.3% paths=package.json

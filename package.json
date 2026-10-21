@@ -1,6 +1,6 @@
 {
   "name": "blendfile",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read Blender .blend files (legacy and 5.x headers, gzip/zstd, SDNA) in browsers and Node.js.",
   "license": "MIT",
   "author": "Michael Mannseicher <mad.mansi90@gmail.com>",
