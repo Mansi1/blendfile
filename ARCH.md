@@ -39,7 +39,7 @@ flowchart TD
 
 ## Operations
 
-There is no service. The library is built with `make build` (pkgroll: ESM, CJS, `.d.mts`, `.d.cts` in `dist/`). `make e2e` packs the tarball, installs it into a clean project and runs it under Node as ESM and CJS against every fixture.
+There is no service. The library is built with `make build` (pkgroll: ESM, CJS, `.d.mts`, `.d.cts` in `dist/`). `make e2e` packs the tarball, installs it into a clean project and runs it under Node as ESM and CJS against every fixture. The package is published to npm as `blendfile` with `npm publish`; its `prepublishOnly` script builds `dist/` and runs the unit tests first, so a stale or failing build is never published.
 
 ## Security and privacy
 

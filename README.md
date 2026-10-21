@@ -14,11 +14,9 @@ Website: https://mansi1.github.io/blendfile/. The extension's `.vsix` can be dow
 
 ## Install
 
-The package is not on npm yet. Build and pack it, then add the tarball:
-
 ```sh
-bun install && bun run build && bun pm pack
-bun add ./blendfile-0.1.0.tgz
+bun add blendfile
+# or: npm install blendfile / pnpm add blendfile
 ```
 
 ## Use

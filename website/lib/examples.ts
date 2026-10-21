@@ -5,8 +5,9 @@ import { highlightLines } from "./highlight.ts";
 const withHighlighting = (lang: string, tabs: { title: string; code: string }[]) => tabs.map((tab) => ({ ...tab, lines: highlightLines(tab.code, lang) }));
 
 export const INSTALL_EXAMPLE = withHighlighting("bash", [
-  { title: "bun", code: "bun install && bun run build && bun pm pack\nbun add ./blendfile-0.1.0.tgz" },
-  { title: "npm", code: "bun install && bun run build && bun pm pack\nnpm install ./blendfile-0.1.0.tgz" },
+  { title: "bun", code: "bun add blendfile" },
+  { title: "npm", code: "npm install blendfile" },
+  { title: "pnpm", code: "pnpm add blendfile" },
 ]);
 
 export const OPEN_EXAMPLE = withHighlighting("ts", [

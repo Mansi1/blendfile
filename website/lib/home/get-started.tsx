@@ -5,7 +5,7 @@ import { ProcessSteps } from "../parts/process-steps.tsx";
 import { HomeSection } from "../parts/section-header.tsx";
 
 export const GET_STARTED_STEPS = [
-  { title: "Install", description: "Build and pack the library, then add the tarball to your project." },
+  { title: "Install", description: "Add the blendfile package from npm with bun, npm or pnpm." },
   { title: "Open bytes", description: "Pass a Uint8Array or ArrayBuffer from disk, a file input or fetch." },
   { title: "Navigate", description: "Find datablocks, read members by name, follow pointers." },
 ];

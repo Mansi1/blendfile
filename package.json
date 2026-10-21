@@ -4,7 +4,7 @@
   "description": "Read Blender .blend files (legacy and 5.x headers, gzip/zstd, SDNA) in browsers and Node.js.",
   "license": "MIT",
   "author": "Michael Mannseicher <mad.mansi90@gmail.com>",
-  "homepage": "https://github.com/Mansi1/blendfile#readme",
+  "homepage": "https://mansi1.github.io/blendfile/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Mansi1/blendfile.git"
@@ -50,6 +50,7 @@
   },
   "scripts": {
     "build": "pkgroll --clean-dist --src src",
+    "prepublishOnly": "bun run build && bun run test",
     "test": "bun test test/",
     "lint": "make lint",
     "website:dev": "make dev",

@@ -11,7 +11,7 @@ import { SpecificationSection } from "../docs/specification.tsx";
 import { VscodeSection } from "../vscode/section.tsx";
 
 const STEPS = [
-  { title: "Install", description: "Build and pack the library, then add the tarball." },
+  { title: "Install", description: "Add the blendfile package from npm." },
   { title: "Open bytes", description: "From disk in Node.js, from a file input or fetch in the browser." },
   { title: "Navigate", description: "Datablocks, members, pointers and file info." },
 ];

@@ -1,4 +1,4 @@
-// The library guide's first two sections: install the package and open a file.
+// VERIFIED: the library guide's first two sections: install the package (published to npm as blendfile) and open a file.
 import CodeExample from "../../components/code-example.tsx";
 import { INSTALL_EXAMPLE, NAVIGATE_EXAMPLE, OPEN_EXAMPLE } from "../examples.ts";
 
@@ -6,7 +6,7 @@ export function InstallSection() {
   return (
     <>
       <h2 id="install">Install</h2>
-      <p>The package is not on npm yet. Build and pack it from the repository, then add the tarball to your project:</p>
+      <p>Add the <a href="https://www.npmjs.com/package/blendfile">blendfile</a> package from npm:</p>
       <CodeExample name="usage-install" label="Install" tabs={INSTALL_EXAMPLE} />
       <p>It ships ESM and CommonJS builds with type declarations and depends on two pure-JS decompressors, <code>fflate</code> and <code>fzstd</code>. The package declares Node.js 18 or later; the tests run on Node.js 24 and Chromium.</p>
     </>
