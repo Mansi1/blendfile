@@ -168,7 +168,18 @@ body { margin: 0; background: var(--background); color: var(--foreground); font-
   --code-background: #1a1b26;
   --code-border: #2c2f45;
 }
-.dark { --brand-glow: color-mix(in oklab, var(--brand-violet) 35%, transparent); }
+/* VERIFIED: a darker page than tangerine's (#e8ebed light, #1c2433 dark), so white cards and the dark code frames stand out;
+   dark mode is a deep navy like the audio-tag site, with cards, borders and menus moved down to match. */
+:root { --background: #d5dae1; --sidebar: #cdd2da; --border: #c7cdd5; }
+.dark {
+  --brand-glow: color-mix(in oklab, var(--brand-violet) 35%, transparent);
+  --background: #0b1020;
+  --card: #141a2c;
+  --popover: #141a2c;
+  --muted: #182033;
+  --sidebar: #0f1526;
+  --border: #252d44;
+}
 
 /* A soft color wash behind every page. */
 body {

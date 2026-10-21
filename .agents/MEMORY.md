@@ -7,3 +7,4 @@
 - VERIFIED[gate] no git repo: `vae.py gate` sees no changes; run `vae.py verify --repo . --changed tmp/changed.txt` BC gate output.
 - VERIFIED[three EXRLoader 0.186] a Y-only (luminance) EXR decodes to 1 float per pixel, RGB(A) files to 4 BC Poly Haven roughness maps are Y-only; texture-loader handles both.
 - VERIFIED[textures orientation] createImageBitmap(imageOrientation "flipY") + texture.flipY=false matches Blender UVs BC Workbench/Cycles renders of texture_v43 agree with the webview.
+- VERIFIED[defuss-ssg client nav] runtime.js intercepts internal link clicks and skips a link to the current path; `data-no-nav` on an `<a>` opts out (full browser load) BC brand click on the overview did nothing.

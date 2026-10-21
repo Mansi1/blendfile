@@ -53,6 +53,17 @@ for (const route of ROUTES) {
   });
 }
 
+// defuss-ssg's client navigation ignores a link to the current page; the brand opts out (data-no-nav) so it reloads.
+for (const route of ["", "docs.html"]) {
+  test(`the brand on ${route || "the overview"} loads the overview anew`, async ({ page }) => {
+    await page.goto(route);
+    await page.evaluate(() => { (window as Window & { beforeClick?: boolean }).beforeClick = true; });
+    await Promise.all([page.waitForEvent("load"), page.locator(".navbar-brand").click()]);
+    expect(new URL(page.url()).pathname).toBe(BASE_PATH);
+    expect(await page.evaluate(() => (window as Window & { beforeClick?: boolean }).beforeClick)).toBeUndefined();
+  });
+}
+
 test("the Docs page offers the packed VS Code extension for download", async ({ page, request }) => {
   await page.goto("docs.html");
   const download = page.getByRole("link", { name: /Download blendfile-preview\.vsix/ });

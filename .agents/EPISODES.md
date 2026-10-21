@@ -43,3 +43,5 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-20T00:26:23Z s=989b2bbf FINDING website/assets/site.css:[id] scroll-margin-top learn=test: The navigation test asserts the clicked chapter heading is in the viewport.
 2026-10-20T00:26:23Z s=989b2bbf FINDING website/lib/parts/reference-table.tsx, site.css learn=none: Visual; no pixel assertion.
 2026-10-20T00:26:23Z s=989b2bbf FINDING website/.ssg-temp learn=none: Only after an interrupted build; defuss-ssg reuses the stale copy.
+2026-10-21T13:02:36Z s=989b2bbf DONE fp=1b0f20937017 cov=95.3% paths=website/ARCH.md,website/assets/site.css,website/lib/layout/docs-navigation.tsx,website/lib/layout/navbar.tsx(+2)
+2026-10-21T13:28:20Z s=989b2bbf DONE fp=c77a6d291c85 cov=95.3% paths=e2e/website.spec.ts,website/ARCH.md,website/assets/site.css,website/lib/layout/navbar.tsx
