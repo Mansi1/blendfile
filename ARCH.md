@@ -39,7 +39,7 @@ flowchart TD
 
 ## Operations
 
-There is no service. The library is built with `make build` (pkgroll: ESM, CJS, `.d.mts`, `.d.cts` in `dist/`). `make e2e` packs the tarball, installs it into a clean project and runs it under Node as ESM and CJS against every fixture. The package is published to npm as `blendfile` with `npm publish`; its `prepublishOnly` script builds `dist/` and runs the unit tests first, so a stale or failing build is never published.
+There is no service. The library is built with `make build` (pkgroll: ESM, CJS, `.d.mts`, `.d.cts` in `dist/`). `make e2e` packs the tarball, installs it into a clean project and runs it under Node as ESM and CJS against every fixture. The package is published to npm as `blendfile`. `.github/workflows/publish.yml` runs on a pushed `v*` tag: it fails unless the tag equals the `package.json` version, runs lint, builds, runs the clean-consumer test, and publishes with `npm publish --provenance`. The `prepublishOnly` script builds `dist/` and runs the unit tests again, so a stale or failing build is never published, from CI or by hand. The workflow uses npm trusted publishing (GitHub OIDC) instead of an npm token in the repository secrets: no long-lived credential can leak, and npm shows each release's provenance, linking the tarball to the commit and workflow run that built it. Trusted publishing is configured per package on npmjs.com, so the first release (0.1.0) is published by hand.
 
 ## Security and privacy
 

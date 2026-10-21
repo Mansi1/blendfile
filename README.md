@@ -1,5 +1,7 @@
 # blendfile
 
+[![npm](https://img.shields.io/npm/v/blendfile)](https://www.npmjs.com/package/blendfile) [![license](https://img.shields.io/npm/l/blendfile)](LICENSE) [![website](https://img.shields.io/badge/docs-mansi1.github.io%2Fblendfile-f5792a)](https://mansi1.github.io/blendfile/)
+
 Read Blender `.blend` files in browsers and Node.js. The library handles:
 
 - the 12-byte header of Blender up to 4.x and the 17-byte header of Blender 5.0+
@@ -18,6 +20,8 @@ Website: https://mansi1.github.io/blendfile/. The extension's `.vsix` can be dow
 bun add blendfile
 # or: npm install blendfile / pnpm add blendfile
 ```
+
+The package is [blendfile on npm](https://www.npmjs.com/package/blendfile). It ships ESM and CommonJS builds with type declarations, depends on the pure-JS decompressors `fflate` and `fzstd`, and needs Node.js 18 or later.
 
 ## Use
 
@@ -93,6 +97,13 @@ Every failure throws `BlendError` with `code` `NOT_BLEND`, `UNSUPPORTED` or `COR
 | `make vscode-e2e` | install the `.vsix` into a throwaway VS Code profile and open every fixture |
 | `make vscode-publish` | run `vscode-e2e`, then publish the `.vsix` to the VS Code Marketplace (`VSCE_PAT`) and Open VSX (`OVSX_PAT`) |
 | `make verify` | lint, test, coverage, e2e |
+
+## Release
+
+1. Raise `version` in `package.json` and commit.
+2. Tag the commit with that version and push the tag: `git tag v0.1.1 && git push origin v0.1.1`.
+
+The Publish workflow (`.github/workflows/publish.yml`) checks that the tag matches the version, runs lint, the unit tests and the clean-consumer test, and publishes to npm with provenance. It authenticates through npm trusted publishing. To set that up once, open the package on npmjs.com and go to Settings, then Trusted publishing. Add GitHub Actions with owner `Mansi1`, repository `blendfile` and workflow `publish.yml`.
 
 ## License
 

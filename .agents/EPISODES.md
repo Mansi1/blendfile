@@ -46,3 +46,6 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-21T13:02:36Z s=989b2bbf DONE fp=1b0f20937017 cov=95.3% paths=website/ARCH.md,website/assets/site.css,website/lib/layout/docs-navigation.tsx,website/lib/layout/navbar.tsx(+2)
 2026-10-21T13:28:20Z s=989b2bbf DONE fp=c77a6d291c85 cov=95.3% paths=e2e/website.spec.ts,website/ARCH.md,website/assets/site.css,website/lib/layout/navbar.tsx
 2026-10-21T14:04:17Z s=989b2bbf DONE fp=bfc932caf0af cov=95.3% paths=ARCH.md,README.md,package.json,website/lib/docs/install-and-open.tsx(+3)
+2026-10-21T14:06:27Z s=989b2bbf FAIL tests.e2e.1
+2026-10-21T14:09:47Z s=989b2bbf DONE fp=8fb8bebd1478 cov=95.3% paths=.github/workflows/publish.yml,ARCH.md,README.md,package.json
+2026-10-21T14:11:25Z s=989b2bbf DONE fp=355472ec8341 cov=95.3% paths=.github/workflows/publish.yml,ARCH.md,README.md,package.json

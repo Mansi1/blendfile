@@ -7,7 +7,7 @@
   "homepage": "https://mansi1.github.io/blendfile/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Mansi1/blendfile.git"
+    "url": "git+https://github.com/Mansi1/blendfile.git"
   },
   "bugs": {
     "url": "https://github.com/Mansi1/blendfile/issues"
