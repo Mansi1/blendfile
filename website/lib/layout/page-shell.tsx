@@ -14,12 +14,14 @@ export interface PageShellProps extends Props {
   route: string;
   /** Show the side navigation of the Docs sections (the Docs page only). */
   sideNavigation?: boolean;
+  /** Send the visitor to this route after a few seconds (the 404 page). */
+  redirectTo?: string;
 }
 
-export function PageShell({ title, description, route, sideNavigation = false, children }: PageShellProps) {
+export function PageShell({ title, description, route, sideNavigation = false, redirectTo, children }: PageShellProps) {
   return (
     <html lang="en">
-      <Head title={title} description={description} route={route} />
+      <Head title={title} description={description} route={route} redirectTo={redirectTo} />
       <body>
         <Navbar route={route} />
         {sideNavigation ? (

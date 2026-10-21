@@ -293,3 +293,8 @@ body {
 .mk-docs-content-prose td code { overflow-wrap: normal; word-break: normal; white-space: nowrap; }
 .docs-chapter { display: block; }
 .home-section a:not(.btn) { color: var(--brand-orange); text-underline-offset: 3px; }
+
+/* ---------- 404: a centered empty state, as on the audio-tag site ---------- */
+.not-found { min-height: 70vh; display: grid; place-items: center; text-align: center; }
+.not-found .mk-empty-state-title { display: grid; justify-items: center; gap: 1rem; font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem); letter-spacing: -0.02em; background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.not-found .mk-empty-state-title img { filter: drop-shadow(0 14px 30px var(--brand-glow)); }

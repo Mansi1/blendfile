@@ -100,6 +100,16 @@ test("page links have no .html and each one opens its own page", async ({ page, 
   expect(new Set(checked.values()).size).toBe(checked.size);
 });
 
+// GitHub Pages answers a missing address with 404.html; vite preview sends only the status, so this opens it directly.
+test("the 404 page counts down and returns to the overview", async ({ page }) => {
+  await page.goto("404.html");
+  await expect(page.getByRole("heading", { level: 1, name: "Page not found" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Read the docs" })).toHaveAttribute("href", `${BASE_PATH}docs`);
+  await expect(page.locator("#countdown")).toHaveText(/in [1-4] seconds?\./, { timeout: 3000 });
+  await page.waitForURL((url) => url.pathname === BASE_PATH, { timeout: 8000 });
+  await expect(page.locator("#playground")).toBeVisible();
+});
+
 test("every page has a link preview with an absolute image of the right size", async ({ page, request }) => {
   for (const route of ROUTES.filter((route) => route !== "404.html")) {
     await page.goto(route);

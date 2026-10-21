@@ -1,13 +1,18 @@
 // <head> of every page (server only: lib/ is not hydrated): title, description, link preview tags, theme and styles.
 import type { Props } from "defuss";
-import { SITE } from "../site.ts";
+import { SITE, SITE_PATH } from "../site.ts";
 
 export interface HeadProps extends Props {
   title: string;
   description: string;
   /** Route of the page, e.g. `/docs.html`, for the canonical and og:url addresses. */
   route: string;
+  /** Route to send the visitor to after REDIRECT_SECONDS (the 404 page). The refresh uses the site path
+   *  (`/blendfile/`), not the published address, so a local preview stays local. */
+  redirectTo?: string;
 }
+
+export const REDIRECT_SECONDS = 5;
 
 // Applied before first paint so the page does not flash light in dark mode.
 // The SSR serializer escapes "&", "<" and ">" inside <script>, so this snippet avoids them.
@@ -19,13 +24,14 @@ const SOCIAL_IMAGE = `${SITE}assets/social-preview.jpg`;
 /** The published address of a page: "/docs.html" → ".../docs", "/index.html" or "/" → the site itself. */
 const publishedUrl = (route: string) => SITE + route.replace(/^\//, "").replace(/(^|\/)index\.html$/, "$1").replace(/\.html$/, "");
 
-export function Head({ title, description, route }: HeadProps) {
+export function Head({ title, description, route, redirectTo }: HeadProps) {
   const fullTitle = `${title} · blendfile`;
   return (
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="description" content={description} />
+      {redirectTo === undefined ? null : <meta http-equiv="refresh" content={`${REDIRECT_SECONDS};url=${SITE_PATH}${redirectTo.replace(/^\//, "")}`} />}
       <title>{fullTitle}</title>
       <link rel="canonical" href={publishedUrl(route)} />
       <meta property="og:type" content="website" />

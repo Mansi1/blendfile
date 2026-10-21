@@ -33,6 +33,7 @@ flowchart LR
 - `lib/layout/head.tsx` writes Open Graph and Twitter tags with absolute URLs (`lib/site.ts`), which link previews in WhatsApp, Slack or X need. The preview image `assets/social-preview.jpg` (1200 × 630, about 95 KB) is rendered from an HTML card by `tools/render_social_image.ts`.
 - VERIFIED: every page sits in one centered column, `.page` in `site.css` (72rem wide with a 1rem gutter, as on the audio-tag site). The top bar pads its content to the same column, so the brand and the theme toggle line up with the content edges. The Docs page splits the column into a 15rem side navigation and the article from 60rem up; below that the top bar and the specification index carry navigation. One column for every page, instead of a side navigation on every page, gives the overview and the playground the full width.
 - VERIFIED: defuss-ssg's client navigation fetches internal pages and swaps the body in place, and it ignores a click on a link to the current page. The brand in the top bar carries `data-no-nav`, so the browser loads the overview anew from any page; an e2e test checks it from the overview and from Docs.
+- VERIFIED: `404` follows the audio-tag site: a centered defuss-shadcn empty state with the icon, two buttons (the overview, the Docs) and a countdown. A `<meta http-equiv="refresh">` sends the visitor to the overview after 5 seconds, so the redirect works without scripts; the inline script only counts the text down. The refresh points at the site path `/blendfile/`, not the published URL, so a local preview stays local. An e2e test checks the countdown and the redirect.
 - The brand colors (Blender orange and blue with pink and violet between them) are tokens and gradients at the end of `site.css`. The same block sets a darker page background than the tangerine theme in both modes, a deep navy in dark mode as on the audio-tag site. They are unlayered, so they override the defuss-shadcn component styles, which sit in cascade layers.
 
 ## Why this design
@@ -43,7 +44,7 @@ flowchart LR
 
 ## Operations
 
-`make website` builds into `website/dist/`. `make start` serves it at http://localhost:4173/blendfile/ with `vite preview`, the path GitHub Pages uses. `preview.config.ts` sets `appType: "mpa"`: Vite then serves `/usage` from `usage.html` and a missing page as a 404, whereas its default single-page mode, like `defuss-ssg serve`, answered any unknown path with the overview, which would hide a broken link. `make dev` runs the dev server on port 3000. `make e2e` runs Playwright over every built page under `/blendfile/`.
+`make website` builds into `website/dist/`. `make start` serves it at http://localhost:4173/blendfile/ with `vite preview`, the path GitHub Pages uses. `preview.config.ts` sets `appType: "mpa"`: Vite then serves `/docs` from `docs.html` and a missing page as a bare 404 (only GitHub Pages and `make dev` answer with `404.html`), whereas its default single-page mode, like `defuss-ssg serve`, answered any unknown path with the overview, which would hide a broken link. `make dev` runs the dev server on port 3000. `make e2e` runs Playwright over every built page under `/blendfile/`.
 
 `.github/workflows/pages.yml` builds the site on every push to `main` and deploys it to GitHub Pages under `/blendfile/`.
 
