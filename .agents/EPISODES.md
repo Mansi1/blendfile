@@ -52,3 +52,8 @@ Wrap: EVERY lead → test | .agents/VERIFY.py rule | one MEMORY line with BC, th
 2026-10-21T14:19:28Z s=989b2bbf DONE fp=8618fe5362ec cov=95.3% paths=package.json
 2026-10-21T15:32:00Z s=989b2bbf DONE fp=9239290f07f8 cov=95.3% paths=README.md
 2026-10-21T15:47:28Z s=989b2bbf DONE fp=82521ef88c7c cov=95.3% paths=e2e/website.spec.ts,website/ARCH.md,website/assets/site.css,website/lib/layout/head.tsx(+3)
+2026-10-21T16:08:27Z s=989b2bbf FAIL tests.e2e.1
+2026-10-21T16:22:24Z s=989b2bbf FAIL env.example,tests.e2e.1
+2026-10-21T16:24:14Z s=989b2bbf FAIL env.example
+2026-10-21T16:25:57Z s=989b2bbf FAIL tests.e2e.1
+2026-10-21T16:28:03Z s=989b2bbf DONE fp=92faa3da7334 cov=95.3% paths=Makefile,e2e/website.spec.ts,website/ARCH.md,website/assets/docs-nav.js(+5)

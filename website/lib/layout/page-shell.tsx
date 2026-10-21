@@ -4,6 +4,7 @@
 import type { Props } from "defuss";
 import { UI_SCRIPTS } from "../ui.ts";
 import { DocsNavigation } from "./docs-navigation.tsx";
+import { Footer } from "./footer.tsx";
 import { Head } from "./head.tsx";
 import { Navbar } from "./navbar.tsx";
 
@@ -32,8 +33,10 @@ export function PageShell({ title, description, route, sideNavigation = false, r
         ) : (
           <main id="content" class="page page-main">{children}</main>
         )}
+        <Footer />
         <script type="module" src="/assets/vendor/core.min.js"></script>
         {UI_SCRIPTS.map((component) => <script type="module" src={`/assets/vendor/${component}.min.js`} key={component}></script>)}
+        <script type="module" src="/assets/docs-nav.js"></script>
       </body>
     </html>
   );

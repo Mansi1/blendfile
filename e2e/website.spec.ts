@@ -1,7 +1,7 @@
 // Every page of the built website in a real browser (index with the playground, docs, 404), plus the playground flows
 // end to end.
 import { expect, type Page, test } from "@playwright/test";
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
@@ -156,6 +156,26 @@ test("the side navigation reaches every Docs section and every spec chapter", as
   await navigation.getByRole("link", { name: "04 Block headers" }).click();
   await expect(page).toHaveURL(/#04-block-headers$/);
   await expect(page.locator('[id="04-block-headers"]')).toBeInViewport();
+  // The link of the section in view is marked as the reader scrolls (assets/docs-nav.js), and only that one.
+  const marked = navigation.locator('[aria-current="location"]');
+  await expect(marked).toHaveText("04 Block headers");
+  await page.locator('[id="api-reference"]').evaluate((heading) => heading.scrollIntoView());
+  await expect(marked).toHaveText("API reference");
+  await expect(marked).toHaveCount(1);
+});
+
+test("the footer names the library version, the build and the gzipped size; GitHub and npm open in a new tab", async ({ page }) => {
+  const { version } = JSON.parse(readFileSync(join(repositoryRoot, "package.json"), "utf8"));
+  await page.goto("docs.html");
+  const footer = page.locator("footer.site-footer");
+  await expect(footer.getByRole("link", { name: `v${version}` })).toHaveAttribute("href", "https://www.npmjs.com/package/blendfile");
+  await expect(footer).toContainText(/\d+\.\d KB gzipped/);
+  const externalLinks = page.locator('nav[aria-label="Main"] a[href^="https:"], footer.site-footer a[href^="https:"]');
+  expect(await externalLinks.count()).toBe(7);
+  for (const link of await externalLinks.all()) {
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", "noopener");
+  }
 });
 
 test("mermaid diagrams render to SVG", async ({ page }) => {

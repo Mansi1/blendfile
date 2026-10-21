@@ -72,11 +72,12 @@ build: ## build the library into dist/ (ESM, CJS, type declarations)
 	bun run build
 
 # The website's own scripts run defuss-ssg in website/ (website/package.json). The vendor plugin in website/config.ts
-# copies the UI, the samples and the packed extension into website/assets, so the .vsix must exist first.
-website: vscode-package ## build the static website into website/dist
+# copies the UI, the samples and the packed extension into website/assets, so the .vsix must exist first. VERIFIED: the footer
+# shows the gzipped size of the library build (website/lib/build-info.ts), so dist/ is built first too.
+website: build vscode-package ## build the static website into website/dist
 	cd website && bun run build
 
-dev: vscode-package ## run the website dev server on http://localhost:3000
+dev: build vscode-package ## run the website dev server on http://localhost:3000
 	cd website && bun run dev
 
 # VS Code extension: host bundle (CJS, also loadable by vscode.dev), webview bundle (IIFE), integration suite.

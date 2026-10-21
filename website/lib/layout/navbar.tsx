@@ -1,5 +1,5 @@
 // VERIFIED: top bar of every page: brand (the link to the overview, which reloads it: data-no-nav keeps defuss-ssg's client
-// navigation out, as that skips a link to the current page), the main links, the repository on GitHub and the theme toggle (the one hydrated part,
+// navigation out, as that skips a link to the current page), the main links, the repository on GitHub, the package on npm and the theme toggle (the one hydrated part,
 // from components/). Its content sits in the same 72rem column as the page (site.css).
 import type { Props } from "defuss";
 import ThemeToggle from "../../components/theme-toggle.js";
@@ -9,11 +9,16 @@ const MAIN_LINKS = [
   { route: "/docs.html", label: "Docs" },
   { route: "/docs.html#vscode-extension", label: "VS Code" },
   { route: "https://github.com/Mansi1/blendfile", label: "GitHub" },
+  { route: "https://www.npmjs.com/package/blendfile", label: "npm" },
 ];
 
 // Native Popover API attributes the defuss JSX types do not declare yet.
 const MENU_TOGGLE_ATTRIBUTES: Record<string, string> = { popovertarget: "main-menu" };
 const MENU_POPOVER_ATTRIBUTES: Record<string, string> = { popover: "auto" };
+
+// GitHub and npm open in a new tab; noopener keeps the opened page from reaching back to this one.
+const EXTERNAL_LINK_ATTRIBUTES = { target: "_blank", rel: "noopener" };
+const isExternal = (route: string) => /^https?:/.test(route);
 
 /** "page" for the link of the current page. */
 const currentAttribute = (route: string, currentRoute: string) => (route === currentRoute ? "page" : undefined);
@@ -29,7 +34,7 @@ export function Navbar({ route }: Props & { route: string }) {
         <div class="navbar-collapse" id="main-menu" {...MENU_POPOVER_ATTRIBUTES}>
           <ul class="navbar-menu">
             {MAIN_LINKS.map((link) => (
-              <li key={link.route}><a href={link.route} aria-current={currentAttribute(link.route, route)}>{link.label}</a></li>
+              <li key={link.route}><a href={link.route} aria-current={currentAttribute(link.route, route)} {...(isExternal(link.route) ? EXTERNAL_LINK_ATTRIBUTES : {})}>{link.label}</a></li>
             ))}
           </ul>
         </div>

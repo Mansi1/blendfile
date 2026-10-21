@@ -254,7 +254,7 @@ body {
 .graphic { box-shadow: 0 18px 50px -36px var(--brand-glow); }
 
 /* Docs navigation: the current page in the brand gradient. */
-.mk-docs-navigation a[aria-current="page"] { background: linear-gradient(90deg, color-mix(in oklab, var(--brand-orange) 18%, transparent), color-mix(in oklab, var(--brand-violet) 14%, transparent)); color: var(--foreground); box-shadow: inset 3px 0 0 var(--brand-orange); }
+.mk-docs-navigation a[aria-current="page"], .mk-docs-navigation a[aria-current="location"] { background: linear-gradient(90deg, color-mix(in oklab, var(--brand-orange) 18%, transparent), color-mix(in oklab, var(--brand-violet) 14%, transparent)); color: var(--foreground); box-shadow: inset 3px 0 0 var(--brand-orange); }
 .mk-docs-content-prose a:not(.btn) { color: var(--brand-orange); text-decoration-color: color-mix(in oklab, var(--brand-violet) 60%, transparent); text-underline-offset: 3px; }
 
 /* ---------- Code: one dark editor look for Shiki blocks and the code examples ---------- */
@@ -298,3 +298,11 @@ body {
 .not-found { min-height: 70vh; display: grid; place-items: center; text-align: center; }
 .not-found .mk-empty-state-title { display: grid; justify-items: center; gap: 1rem; font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem); letter-spacing: -0.02em; background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .not-found .mk-empty-state-title img { filter: drop-shadow(0 14px 30px var(--brand-glow)); }
+
+/* ---------- Footer, as on the audio-tag site: license and tools, then the build line ---------- */
+.site-footer { border-top: 1px solid var(--border); padding-block: 2rem; color: var(--muted-foreground); font-size: 0.875rem; }
+.site-footer .page { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
+.site-footer a { color: inherit; text-underline-offset: 3px; }
+.site-footer a:hover { color: var(--foreground); }
+.site-footer .build { font-family: var(--font-mono); font-size: 0.8rem; }
+.site-footer .nowrap, .site-footer time { white-space: nowrap; }
