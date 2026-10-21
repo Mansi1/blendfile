@@ -1,11 +1,17 @@
 /* Page grid only; colors, type and spacing come from defuss-shadcn tokens. */
 body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
-.site-shell { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 2rem; max-width: 80rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
-.site-shell > .mk-docs-navigation { position: sticky; top: 4.5rem; align-self: start; max-height: calc(100vh - 6rem); overflow: auto; }
-@media (max-width: 52rem) {
-  .site-shell { grid-template-columns: minmax(0, 1fr); }
-  .site-shell > .mk-docs-navigation { position: static; max-height: none; }
+/* One centered column for the top bar and the content, as on the audio-tag site: 72rem wide with a 1rem gutter. */
+.page { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; box-sizing: border-box; }
+.page-main { padding-block: 1.5rem 4rem; }
+/* The Docs page puts its side navigation beside the article from 60rem up. */
+.page-docs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; padding-block: 1.5rem 4rem; }
+.page-docs > * { min-width: 0; }
+@media (min-width: 60rem) {
+  .page-docs { grid-template-columns: 15rem minmax(0, 1fr); }
+  .page-docs > .mk-docs-navigation { position: sticky; top: 4.75rem; align-self: start; max-height: calc(100dvh - 6rem); overflow: auto; }
 }
+/* The navbar spans the window; its content lines up with the .page column (72rem minus the two 1rem gutters). */
+.navbar { padding-inline: max(1rem, calc((100% - 70rem) / 2)); }
 .screenshot { margin: 1.5rem 0; display: grid; gap: 0.5rem; }
 .screenshot img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
 .screenshot figcaption { color: var(--muted-foreground); font-size: 0.875rem; }
@@ -148,8 +154,8 @@ body { margin: 0; background: var(--background); color: var(--foreground); font-
 .home > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
 .mk-hero-pill { white-space: normal; text-align: center; }
 @media (max-width: 40rem) { .mk-stats-band { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mk-hero-actions { flex-wrap: wrap; justify-content: center; } }
-/* On phones the navbar and the spec index carry navigation; the sidebar would push content down a full screen. */
-@media (max-width: 52rem) { .site-shell > .mk-docs-navigation { display: none; } }
+/* Below 60rem the navbar and the spec index carry navigation; the sidebar would push content down a full screen. */
+@media (max-width: 59.99rem) { .page-docs > .mk-docs-navigation { display: none; } }
 
 /* ---------- Brand colors: Blender orange, Blender blue and a violet between them ---------- */
 :root {

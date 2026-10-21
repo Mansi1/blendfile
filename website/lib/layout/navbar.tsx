@@ -1,4 +1,5 @@
-// Top bar of every page: brand, the main links and the theme toggle (the one hydrated part, from components/).
+// Top bar of every page: brand, the main links, the repository on GitHub and the theme toggle (the one hydrated part,
+// from components/). Its content sits in the same 72rem column as the page (site.css).
 import type { Props } from "defuss";
 import ThemeToggle from "../../components/theme-toggle.js";
 
@@ -7,6 +8,7 @@ const MAIN_LINKS = [
   { route: "/#playground", label: "Playground" },
   { route: "/docs.html", label: "Docs" },
   { route: "/docs.html#vscode-extension", label: "VS Code" },
+  { route: "https://github.com/Mansi1/blendfile", label: "GitHub" },
 ];
 
 // Native Popover API attributes the defuss JSX types do not declare yet.

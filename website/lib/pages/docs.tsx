@@ -18,7 +18,7 @@ const STEPS = [
 
 export function DocsPage({ title, description }: { title: string; description: string }) {
   return (
-    <PageShell title={title} description={description} route="/docs.html">
+    <PageShell title={title} description={description} route="/docs.html" sideNavigation>
       <DocsArticle title={title} lead="How to use the library, every export, and the .blend format byte by byte. Open a file from bytes, find datablocks, read members by name and follow pointers; the same code runs in Node.js and in the browser.">
         <ProcessSteps steps={STEPS} />
         <InstallSection />
