@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" role="img" aria-labelledby="t d">
+  <title id="t">blendfile</title>
+  <desc id="d">Read Blender .blend files in browsers and Node.js: the 12-byte and 17-byte headers of Blender 5.x and older, gzip and zstd, the file's own SDNA types, scenes for 3D viewers.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="960" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f5792a"/>
+      <stop offset="0.45" stop-color="#e8508f"/>
+      <stop offset="0.75" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#3d7ae0"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3925f"/>
+      <stop offset="1" stop-color="#d4452a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.15" cy="0.2" r="0.6">
+      <stop offset="0" stop-color="#f5792a" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#f5792a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <style>
+    .sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+  </style>
+  <rect width="960" height="300" rx="20" fill="url(#bg)"/>
+  <rect width="960" height="300" rx="20" fill="url(#glow)"/>
+
+  <!-- the file as a row of blocks, top right -->
+  <g opacity="0.55" aria-hidden="true">
+    <rect x="620" y="56" width="58" height="22" rx="4" fill="#f5792a"/>
+    <rect x="682" y="56" width="34" height="22" rx="4" fill="#e8508f"/>
+    <rect x="720" y="56" width="96" height="22" rx="4" fill="#8b5cf6"/>
+    <rect x="820" y="56" width="44" height="22" rx="4" fill="#3d7ae0"/>
+    <rect x="868" y="56" width="40" height="22" rx="4" fill="#8b5cf6"/>
+  </g>
+
+  <!-- the icon -->
+  <g transform="translate(64 70) scale(1.6)">
+    <rect width="64" height="64" rx="15" fill="url(#tile)"/>
+    <path d="M32 10 52 21.5 32 33 12 21.5Z" fill="#fff7f2"/>
+    <path d="M12 21.5 32 33v22L12 43.5Z" fill="#334c82"/>
+    <path d="M52 21.5 32 33v22l20-11.5Z" fill="#4f71a3"/>
+    <path d="M12 29 32 40.5M12 36.3l20 11.5" stroke="#8fb0d4" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M52 29 32 40.5M52 36.3 32 47.8" stroke="#a9c3e0" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M32 33v22" stroke="#26396a" stroke-width="1.2"/>
+  </g>
+  <text x="190" y="140" class="sans" font-size="64" font-weight="800" letter-spacing="-2" fill="url(#brand)">blendfile</text>
+  <text x="192" y="178" class="sans" font-size="22" fill="#cbd5e1">Read Blender .blend files in browsers and Node.js</text>
+
+  <g class="mono" font-size="15" fill="#e2e8f0">
+    <rect x="64" y="222" width="200" height="34" rx="17" fill="#ffffff" fill-opacity="0.08" stroke="#f5792a" stroke-opacity="0.6"/>
+    <text x="164" y="244" text-anchor="middle">Blender 5.x + older</text>
+    <rect x="276" y="222" width="132" height="34" rx="17" fill="#ffffff" fill-opacity="0.08" stroke="#e8508f" stroke-opacity="0.6"/>
+    <text x="342" y="244" text-anchor="middle">gzip · zstd</text>
+    <rect x="420" y="222" width="140" height="34" rx="17" fill="#ffffff" fill-opacity="0.08" stroke="#8b5cf6" stroke-opacity="0.6"/>
+    <text x="490" y="244" text-anchor="middle">SDNA types</text>
+    <rect x="572" y="222" width="160" height="34" rx="17" fill="#ffffff" fill-opacity="0.08" stroke="#3d7ae0" stroke-opacity="0.6"/>
+    <text x="652" y="244" text-anchor="middle">scenes for 3D</text>
+    <rect x="744" y="222" width="172" height="34" rx="17" fill="#ffffff" fill-opacity="0.08" stroke="#94a3b8" stroke-opacity="0.6"/>
+    <text x="830" y="244" text-anchor="middle">browser · Node.js</text>
+  </g>
+</svg>
